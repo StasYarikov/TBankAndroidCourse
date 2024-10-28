@@ -9,14 +9,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.databinding.JokeItemBinding
 import com.example.mynotfirstproject.recycler.JokeViewHolder
+import com.example.mynotfirstproject.recycler.util.JokeDiffUtilCallback
 
 class JokeAdapter(): RecyclerView.Adapter<JokeViewHolder>() {
 
     private var data = emptyList<Joke>()
 
     fun setNewData(newData: List<Joke>) {
+        val diffUtilCallback = JokeDiffUtilCallback(data, newData)
+        val calculateDiff = DiffUtil.calculateDiff(diffUtilCallback)
         data = newData
-        notifyDataSetChanged()
+        calculateDiff.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeViewHolder {
