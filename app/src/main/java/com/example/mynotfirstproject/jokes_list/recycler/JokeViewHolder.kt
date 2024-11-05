@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.recycler
+package com.example.mynotfirstproject.jokes_list.recycler
 
 import android.content.Context
 import android.widget.Toast
@@ -9,22 +9,25 @@ import com.example.mynotfirstproject.databinding.JokeItemBinding
 
 class JokeViewHolder(
     private val binding: JokeItemBinding,
+    private val clickListener: (Int) -> Unit,
 ): RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(joke: Joke, position: Int, context: Context) {
+    fun bind(joke: Joke, position: Int) {
         binding.categoryField.text = joke.category
         binding.questionField.text = joke.question
         binding.answerField.text = joke.answer
         binding.picture.setImageResource(joke.picture ?: R.drawable.warning)
 
         binding.root.setOnClickListener() {
-            handleJokeClick(joke, context, position)
+            handleJokeClick(joke, position)
         }
     }
 
-    private fun handleJokeClick(joke: Joke, context: Context, position: Int) {
+    private fun handleJokeClick(joke: Joke, position: Int) {
         if (position != RecyclerView.NO_POSITION) {
-            Toast.makeText(context, "Hahaha: ${joke.answer}", Toast.LENGTH_SHORT).show()
+            (joke)?.let {
+                clickListener(position)
+            }
         }
     }
 }

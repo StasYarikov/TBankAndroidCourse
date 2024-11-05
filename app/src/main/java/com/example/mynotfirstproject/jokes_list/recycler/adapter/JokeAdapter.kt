@@ -1,18 +1,18 @@
-package com.example.mynotfirstproject.recycler.adapter
+package com.example.mynotfirstproject.jokes_list.recycler.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.databinding.JokeItemBinding
-import com.example.mynotfirstproject.recycler.JokeViewHolder
-import com.example.mynotfirstproject.recycler.util.JokeDiffUtilCallback
+import com.example.mynotfirstproject.jokes_list.recycler.JokeViewHolder
+import com.example.mynotfirstproject.jokes_list.recycler.util.JokeDiffUtilCallback
 
-class JokeAdapter(private val context: Context): RecyclerView.Adapter<JokeViewHolder>() {
+class JokeAdapter(
+    private val clickListener: (Int) -> Unit
+): RecyclerView.Adapter<JokeViewHolder>() {
 
     private var data = emptyList<Joke>()
 
@@ -26,7 +26,7 @@ class JokeAdapter(private val context: Context): RecyclerView.Adapter<JokeViewHo
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = JokeItemBinding.inflate(inflater)
-        return JokeViewHolder(binding)
+        return JokeViewHolder(binding, clickListener)
     }
 
     override fun getItemCount(): Int = data.size
@@ -35,7 +35,7 @@ class JokeAdapter(private val context: Context): RecyclerView.Adapter<JokeViewHo
         holder: JokeViewHolder,
         position: Int
     ) {
-        holder.bind(data[position], position, context)
+        holder.bind(data[position], position)
     }
 
 }
