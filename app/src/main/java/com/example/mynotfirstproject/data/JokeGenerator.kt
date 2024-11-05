@@ -1,8 +1,9 @@
 package com.example.mynotfirstproject.data
 
 import com.example.mynotfirstproject.R
+import com.example.mynotfirstproject.interfaces.Generator
 
-class JokeGenerator {
+class JokeGenerator : Generator<Joke> {
 
     private val jokes = arrayOf(
         arrayOf("Kids", "What do kids play when their mom is using the phone?", "Bored games"),
@@ -20,7 +21,7 @@ class JokeGenerator {
         R.drawable.laugh
     )
 
-    fun generateJokes(): List<Joke> {
+    override fun generateJokes(): List<Joke> {
         return buildList {
             for (i in 0..6) {
                 add(generateJoke(i))
