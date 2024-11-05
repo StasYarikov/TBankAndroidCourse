@@ -1,6 +1,7 @@
 package com.example.mynotfirstproject.jokes_list.recycler.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -20,6 +21,7 @@ class JokeAdapter(
         val diffUtilCallback = JokeDiffUtilCallback(data, newData)
         val calculateDiff = DiffUtil.calculateDiff(diffUtilCallback)
         data = newData
+        Log.d("Checking", "$newData")
         calculateDiff.dispatchUpdatesTo(this)
     }
 
