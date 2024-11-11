@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.data.JokeGenerator
-import com.example.mynotfirstproject.databinding.ActivityJokeDetailsBinding
 
 class JokeDetailsViewModel: ViewModel() {
 
@@ -27,7 +26,7 @@ class JokeDetailsViewModel: ViewModel() {
         } else {
             val item = generator.data.getOrNull(position)
             if (item != null) {
-                _joke.value = item
+                _joke.value = item as Joke
             } else {
                 handleError("Joke not found!")
             }
