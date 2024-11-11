@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".jokes_list.MainActivity">
+    tools:context=".view_model.jokes_list.MainActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:itemCount="7"
+        tools:itemCount="11"
         tools:listitem="@layout/joke_item">
     </androidx.recyclerview.widget.RecyclerView>
 

@@ -1,46 +1,37 @@
-package com.example.mynotfirstproject.joke_details
+package com.example.mynotfirstproject.view_model.joke_details
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.Joke
-import com.example.mynotfirstproject.data.JokeGenerator
 import com.example.mynotfirstproject.databinding.ActivityJokeDetailsBinding
+import com.example.mynotfirstproject.view_model.JokesViewModelFactory
 
 class JokeDetailsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityJokeDetailsBinding
-
-    private val generator = JokeGenerator
-
-    private var jokePosition: Int = -1
+    private lateinit var viewModel: JokeDetailsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityJokeDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        handleExtra()
+        initViewModel()
+
+        val jokePosition = intent.getIntExtra(JOKE_POSITION_EXTRA, -1)
+        viewModel.setJokePosition(jokePosition)
     }
 
-    private fun handleExtra() {
-        jokePosition = intent.getIntExtra(JOKE_POSITION_EXTRA, -1)
+    private fun initViewModel() {
+        val factory = JokesViewModelFactory()
+        viewModel = ViewModelProvider(this, factory)[JokeDetailsViewModel::class.java]
+        viewModel.joke.observe(this) { joke -> setupJokeData(joke) }
+        viewModel.error.observe(this) { showError(it) }
 
-        if (jokePosition == -1) {
-            handleError()
-        } else {
-            val item = generator.data[jokePosition] as? Joke
-            if (item != null) {
-                setupJokeData(item)
-            } else {
-                handleError()
-            }
-        }
     }
 
     private fun setupJokeData(joke: Joke) {
@@ -52,8 +43,8 @@ class JokeDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleError() {
-        Toast.makeText(this, "Invalid joke data!", Toast.LENGTH_SHORT).show()
+    private fun showError(it: String?) {
+        Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         finish()
     }
 

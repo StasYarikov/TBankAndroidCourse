@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.jokes_list.recycler
+package com.example.mynotfirstproject.view_model.jokes_list.recycler
 
 import android.content.Context
 import android.widget.Toast

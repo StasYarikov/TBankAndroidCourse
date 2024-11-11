@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.jokes_list.recycler.adapter
+package com.example.mynotfirstproject.view_model.jokes_list.recycler.adapter
 
 import android.content.Context
 import android.util.Log
@@ -8,8 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.databinding.JokeItemBinding
-import com.example.mynotfirstproject.jokes_list.recycler.JokeViewHolder
-import com.example.mynotfirstproject.jokes_list.recycler.util.JokeDiffUtilCallback
+import com.example.mynotfirstproject.view_model.jokes_list.recycler.JokeViewHolder
+import com.example.mynotfirstproject.view_model.jokes_list.recycler.util.JokeDiffUtilCallback
 
 class JokeAdapter(
     private val clickListener: (Int) -> Unit

@@ -13,10 +13,10 @@
         android:theme="@style/Theme.MyNotFirstProject"
         tools:targetApi="31" >
         <activity
-            android:name=".joke_details.JokeDetailsActivity"
+            android:name=".view_model.joke_details.JokeDetailsActivity"
             android:exported="false" />
         <activity
-            android:name=".jokes_list.MainActivity"
+            android:name=".view_model.jokes_list.MainActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

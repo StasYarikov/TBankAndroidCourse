@@ -1,19 +1,22 @@
-package com.example.mynotfirstproject.jokes_list
+package com.example.mynotfirstproject.view_model.jokes_list
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.data.JokeGenerator
 import com.example.mynotfirstproject.databinding.ActivityMainBinding
-import com.example.mynotfirstproject.joke_details.JokeDetailsActivity
-import com.example.mynotfirstproject.jokes_list.recycler.adapter.JokeAdapter
+import com.example.mynotfirstproject.view_model.JokesViewModelFactory
+import com.example.mynotfirstproject.view_model.joke_details.JokeDetailsActivity
+import com.example.mynotfirstproject.view_model.jokes_list.recycler.adapter.JokeAdapter
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: JokeListViewModel
 
-    private val generator = JokeGenerator
     private val adapter = JokeAdapter() {
         startActivity(JokeDetailsActivity.getInstance(this, it))
     }
@@ -24,12 +27,28 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         createRecyclerViewList()
+        initViewModel()
+
         if (savedInstanceState == null) {
             setNewDataToAdapter()
         }
+
         savedInstanceState?.let {
-            setupAdapter(generator.data)
+            viewModel.showGeneratedData()
         }
+    }
+
+    private fun initViewModel() {
+        val factory = JokesViewModelFactory()
+        viewModel = ViewModelProvider(this, factory)[JokeListViewModel::class.java]
+
+        viewModel.jokes.observe(this) { adapter.setNewData(it) }
+        viewModel.error.observe(this) { showError(it) }
+
+    }
+
+    private fun showError(it: String?) {
+        Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
     }
 
     private fun createRecyclerViewList() {
@@ -37,11 +56,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNewDataToAdapter() {
-        val data = generator.generateJokes()
-        adapter.setNewData(data)
-    }
-
-    private fun setupAdapter(newData: List<Joke>) {
-        adapter.setNewData(newData)
+        viewModel.generateJokes()
     }
 }
