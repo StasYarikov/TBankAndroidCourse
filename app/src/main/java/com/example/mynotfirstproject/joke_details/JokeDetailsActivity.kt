@@ -21,17 +21,6 @@ class JokeDetailsActivity : AppCompatActivity() {
 
     private var jokePosition: Int = -1
 
-    companion object {
-
-        private const val JOKE_POSITION_EXTRA = "JOKE_POSITION"
-
-        fun getInstance(context: Context, jokePosition: Int): Intent {
-            return Intent(context, JokeDetailsActivity::class.java).apply {
-                putExtra(JOKE_POSITION_EXTRA, jokePosition)
-            }
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityJokeDetailsBinding.inflate(layoutInflater)
@@ -66,5 +55,16 @@ class JokeDetailsActivity : AppCompatActivity() {
     private fun handleError() {
         Toast.makeText(this, "Invalid joke data!", Toast.LENGTH_SHORT).show()
         finish()
+    }
+
+    companion object {
+
+        private const val JOKE_POSITION_EXTRA = "JOKE_POSITION"
+
+        fun getInstance(context: Context, jokePosition: Int): Intent {
+            return Intent(context, JokeDetailsActivity::class.java).apply {
+                putExtra(JOKE_POSITION_EXTRA, jokePosition)
+            }
+        }
     }
 }

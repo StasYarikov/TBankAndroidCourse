@@ -21,13 +21,12 @@ class JokeAdapter(
         val diffUtilCallback = JokeDiffUtilCallback(data, newData)
         val calculateDiff = DiffUtil.calculateDiff(diffUtilCallback)
         data = newData
-        Log.d("Checking", "$newData")
         calculateDiff.dispatchUpdatesTo(this)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JokeViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = JokeItemBinding.inflate(inflater)
+        val binding = JokeItemBinding.inflate(inflater, parent, false)
         return JokeViewHolder(binding, clickListener)
     }
 

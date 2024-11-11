@@ -19,15 +19,7 @@ class JokeViewHolder(
         binding.picture.setImageResource(joke.picture ?: R.drawable.warning)
 
         binding.root.setOnClickListener() {
-            handleJokeClick(joke, position)
-        }
-    }
-
-    private fun handleJokeClick(joke: Joke, position: Int) {
-        if (position != RecyclerView.NO_POSITION) {
-            (joke)?.let {
-                clickListener(position)
-            }
+            clickListener(position)
         }
     }
 }
