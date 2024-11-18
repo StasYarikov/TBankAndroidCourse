@@ -11,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.databinding.JokeListFragmentBinding
 import com.example.mynotfirstproject.view_model.JokesViewModelFactory
+import com.example.mynotfirstproject.view_model.add_joke.AddJokeFragment
 import com.example.mynotfirstproject.view_model.joke_details.JokeDetailsFragment
 import com.example.mynotfirstproject.view_model.jokes_list.recycler.adapter.JokeAdapter
 
@@ -40,6 +41,14 @@ class JokeListFragment : Fragment() {
         if (viewModel.jokes.value.isNullOrEmpty()) {
             viewModel.generateJokes()
         }
+        binding.addJoke.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, AddJokeFragment(viewModel))
+                .addToBackStack(null)
+                .commit()
+        }
+
+        viewModel.loadJokesWithDelay()
     }
 
     private fun initViewModel() {
@@ -47,7 +56,14 @@ class JokeListFragment : Fragment() {
         viewModel = ViewModelProvider(this, factory)[JokeListViewModel::class.java]
 
         viewModel.jokes.observe(viewLifecycleOwner) { jokes ->
-            adapter.setNewData(jokes)
+            if (jokes.isEmpty()) {
+                binding.recyclerView.visibility = View.GONE
+                binding.emptyView.visibility = View.VISIBLE
+            } else {
+                binding.recyclerView.visibility = View.VISIBLE
+                binding.emptyView.visibility = View.GONE
+                adapter.setNewData(jokes)
+            }
         }
         viewModel.error.observe(viewLifecycleOwner) { error ->
             showError(error)

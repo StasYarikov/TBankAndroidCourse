@@ -3,8 +3,11 @@ package com.example.mynotfirstproject.view_model.jokes_list
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.data.JokeGenerator
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class JokeListViewModel: ViewModel() {
 
@@ -20,5 +23,18 @@ class JokeListViewModel: ViewModel() {
 
     fun showGeneratedData() {
         _jokes.value = JokeGenerator.data
+    }
+
+    fun addJoke(joke: Joke) {
+        val updatedList = _jokes.value.orEmpty().toMutableList()
+        updatedList.add(joke)
+        _jokes.value = updatedList
+    }
+
+    fun loadJokesWithDelay() {
+        viewModelScope.launch {
+            delay(2000)
+            _jokes.postValue(_jokes.value)
+        }
     }
 }
