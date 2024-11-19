@@ -31,6 +31,12 @@ class JokeListViewModel: ViewModel() {
         _jokes.value = updatedList
     }
 
+    fun deleteJoke(jokeNumber: Int) {
+        val updatedList = _jokes.value.orEmpty().toMutableList()
+        updatedList.removeAt(jokeNumber)
+        _jokes.value = updatedList
+    }
+
     fun loadJokesWithDelay() {
         viewModelScope.launch {
             delay(2000)

@@ -12,6 +12,7 @@ import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.databinding.JokeListFragmentBinding
 import com.example.mynotfirstproject.view_model.JokesViewModelFactory
 import com.example.mynotfirstproject.view_model.add_joke.AddJokeFragment
+import com.example.mynotfirstproject.view_model.add_joke.DeleteJokeFragment
 import com.example.mynotfirstproject.view_model.joke_details.JokeDetailsFragment
 import com.example.mynotfirstproject.view_model.jokes_list.recycler.adapter.JokeAdapter
 
@@ -44,6 +45,13 @@ class JokeListFragment : Fragment() {
         binding.addJoke.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, AddJokeFragment(viewModel))
+                .addToBackStack(null)
+                .commit()
+        }
+
+        binding.deleteJoke.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, DeleteJokeFragment(viewModel))
                 .addToBackStack(null)
                 .commit()
         }
