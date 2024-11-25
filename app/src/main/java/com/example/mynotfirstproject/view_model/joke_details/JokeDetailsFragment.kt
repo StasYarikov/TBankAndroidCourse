@@ -1,12 +1,16 @@
 package com.example.mynotfirstproject.view_model.joke_details
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.example.mynotfirstproject.JokeActivity
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.databinding.JokeDetailsFragmentBinding
@@ -16,7 +20,9 @@ class JokeDetailsFragment : Fragment() {
 
     private var _binding: JokeDetailsFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: JokeDetailsViewModel
+    private val viewModel: JokeDetailsViewModel by activityViewModels {
+        (requireActivity() as JokeActivity).viewModelFactory
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,9 +41,7 @@ class JokeDetailsFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        val factory = JokesViewModelFactory()
-        viewModel = ViewModelProvider(this, factory)[JokeDetailsViewModel::class.java]
-        viewModel.joke.observe(viewLifecycleOwner) { joke -> setupJokeData(joke) }
+        viewModel.selectedJoke.observe(viewLifecycleOwner) { joke -> setupJokeData(joke) }
         viewModel.error.observe(viewLifecycleOwner) { showError(it) }
     }
 

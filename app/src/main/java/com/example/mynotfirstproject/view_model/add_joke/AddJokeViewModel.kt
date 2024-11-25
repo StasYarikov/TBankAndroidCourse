@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.view_model.joke_details
+package com.example.mynotfirstproject.view_model.add_joke
 
 import android.content.Context
 import android.content.Intent
@@ -12,24 +12,18 @@ import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.data.JokeGenerator
 import com.example.mynotfirstproject.data.JokeRepository
 
-class JokeDetailsViewModel(private val repository: JokeRepository) : ViewModel() {
-
-    val selectedJoke: LiveData<Joke> = repository.getSelectedJoke()
+class AddJokeViewModel(private val repository: JokeRepository) : ViewModel() {
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
-    fun setJokePosition(position: Int) {
-        if (position == -1) {
-            handleError("Invalid joke data!")
+    fun addJoke(category: String, question: String, answer: String,) : String {
+        if (category.isNotBlank() && question.isNotBlank() && answer.isNotBlank()) {
+            repository.addJoke(Joke(category = category, question = question, answer = answer, picture = JokeGenerator.generateRandomPicture()))
+            return "OK"
         } else {
-            val item = repository.getJokes().value?.get(position)
-            Log.d("Checking", repository.getJokes().value.toString())
-            if (item != null) {
-                repository.selectJoke(item)
-            } else {
-                handleError("Joke not found!")
-            }
+            handleError("Заполните все поля!")
+            return "Error"
         }
     }
 

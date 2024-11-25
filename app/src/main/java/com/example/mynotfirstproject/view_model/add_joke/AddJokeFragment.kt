@@ -8,7 +8,10 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.example.mynotfirstproject.JokeActivity
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.data.JokeGenerator
 import com.example.mynotfirstproject.databinding.FragmentAddJokeBinding
@@ -18,9 +21,11 @@ import com.example.mynotfirstproject.view_model.joke_details.JokeDetailsViewMode
 import com.example.mynotfirstproject.view_model.jokes_list.JokeListFragment
 import com.example.mynotfirstproject.view_model.jokes_list.JokeListViewModel
 
-class AddJokeFragment(
-    private var viewModel: JokeListViewModel
-) : Fragment() {
+class AddJokeFragment : Fragment() {
+
+    private val viewModel: AddJokeViewModel by activityViewModels {
+        (requireActivity() as JokeActivity).viewModelFactory
+    }
 
     private var _binding: FragmentAddJokeBinding? = null
     private val binding get() = _binding!!
@@ -35,18 +40,19 @@ class AddJokeFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.error.observe(viewLifecycleOwner) { showError(it) }
 
         binding.submitJokeButton.setOnClickListener {
             val category = binding.categoryInput.text.toString()
             val question = binding.questionInput.text.toString()
             val answer = binding.answerInput.text.toString()
 
-            if (category.isNotBlank() && question.isNotBlank() && answer.isNotBlank()) {
-                viewModel.addJoke(Joke(category = category, question = question, answer = answer, picture = JokeGenerator.generateRandomPicture()))
+            if (viewModel.addJoke(category, question, answer) == "OK")
                 parentFragmentManager.popBackStack()
-            } else {
-                Toast.makeText(requireContext(), "Заполните все поля", Toast.LENGTH_SHORT).show()
-            }
         }
+    }
+
+    private fun showError(message: String?) {
+        Toast.makeText(requireContext(), message ?: "Unknown error", Toast.LENGTH_SHORT).show()
     }
 }

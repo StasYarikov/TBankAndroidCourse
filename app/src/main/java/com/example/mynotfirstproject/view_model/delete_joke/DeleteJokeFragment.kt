@@ -8,20 +8,26 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.example.mynotfirstproject.JokeActivity
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.data.JokeGenerator
 import com.example.mynotfirstproject.databinding.FragmentAddJokeBinding
 import com.example.mynotfirstproject.databinding.FragmentDeleteJokeBinding
 import com.example.mynotfirstproject.databinding.JokeDetailsFragmentBinding
 import com.example.mynotfirstproject.view_model.JokesViewModelFactory
+import com.example.mynotfirstproject.view_model.delete_joke.DeleteJokeViewModel
 import com.example.mynotfirstproject.view_model.joke_details.JokeDetailsViewModel
 import com.example.mynotfirstproject.view_model.jokes_list.JokeListFragment
 import com.example.mynotfirstproject.view_model.jokes_list.JokeListViewModel
 
-class DeleteJokeFragment(
-    private var viewModel: JokeListViewModel
-) : Fragment() {
+class DeleteJokeFragment : Fragment() {
+
+    private val viewModel: DeleteJokeViewModel by activityViewModels {
+        (requireActivity() as JokeActivity).viewModelFactory
+    }
 
     private var _binding: FragmentDeleteJokeBinding? = null
     private val binding get() = _binding!!
@@ -36,16 +42,17 @@ class DeleteJokeFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.error.observe(viewLifecycleOwner) { showError(it) }
 
         binding.submitJokeButton.setOnClickListener {
             val jokeNumber = binding.jokeNumberInput.text.toString()
 
-            if (jokeNumber.isNotBlank()) {
-                viewModel.deleteJoke(jokeNumber.toInt())
+            if (viewModel.deleteJoke(jokeNumber) == "OK")
                 parentFragmentManager.popBackStack()
-            } else {
-                Toast.makeText(requireContext(), "Заполните все поля", Toast.LENGTH_SHORT).show()
-            }
         }
+    }
+
+    private fun showError(message: String?) {
+        Toast.makeText(requireContext(), message ?: "Unknown error", Toast.LENGTH_SHORT).show()
     }
 }

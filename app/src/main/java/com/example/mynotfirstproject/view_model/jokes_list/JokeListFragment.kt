@@ -7,7 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import com.example.mynotfirstproject.JokeActivity
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.databinding.JokeListFragmentBinding
 import com.example.mynotfirstproject.view_model.JokesViewModelFactory
@@ -20,7 +23,9 @@ class JokeListFragment : Fragment() {
 
     private var _binding: JokeListFragmentBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: JokeListViewModel
+    private val viewModel: JokeListViewModel by activityViewModels {
+        (requireActivity() as JokeActivity).viewModelFactory
+    }
 
     private val adapter = JokeAdapter { jokeId ->
         openJokeDetails(jokeId)
@@ -39,19 +44,19 @@ class JokeListFragment : Fragment() {
         initViewModel()
         createRecyclerViewList()
 
-        if (viewModel.jokes.value.isNullOrEmpty()) {
+        if (viewModel.jokes.value == null) {
             viewModel.generateJokes()
         }
         binding.addJoke.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, AddJokeFragment(viewModel))
+                .replace(R.id.fragmentContainer, AddJokeFragment())
                 .addToBackStack(null)
                 .commit()
         }
 
         binding.deleteJoke.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, DeleteJokeFragment(viewModel))
+                .replace(R.id.fragmentContainer, DeleteJokeFragment())
                 .addToBackStack(null)
                 .commit()
         }
@@ -60,8 +65,6 @@ class JokeListFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        val factory = JokesViewModelFactory()
-        viewModel = ViewModelProvider(this, factory)[JokeListViewModel::class.java]
 
         viewModel.jokes.observe(viewLifecycleOwner) { jokes ->
             if (jokes.isEmpty()) {
@@ -84,10 +87,6 @@ class JokeListFragment : Fragment() {
 
     private fun createRecyclerViewList() {
         binding.recyclerView.adapter = adapter
-    }
-
-    private fun setNewDataToAdapter() {
-        viewModel.generateJokes()
     }
 
     private fun openJokeDetails(jokeId: Int) {
