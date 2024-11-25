@@ -34,7 +34,6 @@ object JokeGenerator {
 
     private fun generateJoke(index: Int): Joke {
         return Joke(
-            id = index,
             category = jokes[index][0],
             question = jokes[index][1],
             answer = jokes[index][2],
@@ -42,7 +41,7 @@ object JokeGenerator {
         )
     }
 
-    private fun generateRandomPicture(): Int? {
+    fun generateRandomPicture(): Int? {
         return avatarSet.random()
     }
 }

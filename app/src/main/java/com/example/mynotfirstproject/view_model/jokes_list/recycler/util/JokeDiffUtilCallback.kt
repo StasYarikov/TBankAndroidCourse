@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.jokes_list.recycler.util
+package com.example.mynotfirstproject.view_model.jokes_list.recycler.util
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.mynotfirstproject.data.Joke
