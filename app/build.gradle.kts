@@ -41,7 +41,8 @@ android {
 
 dependencies {
     val fragment_version = "1.8.4"
-
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation("androidx.fragment:fragment-ktx:$fragment_version")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

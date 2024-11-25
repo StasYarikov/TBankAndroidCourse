@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.data.JokeGenerator
 import com.example.mynotfirstproject.data.JokeRepository
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -26,7 +27,23 @@ class JokeListViewModel(
     fun loadJokesWithDelay() {
         viewModelScope.launch {
             delay(2000)
-            loadJokesWithDelay()
+            repository.loadJokesWithDelay()
         }
+    }
+
+    fun exceptionHandler() = CoroutineExceptionHandler { _, throwable ->
+        handleError("Error")
+    }
+
+    fun loadMoreJokes() {
+        viewModelScope.launch(exceptionHandler) {
+            val response : JokeResponse = RetrofitInstance.jokeApiService.getJokes(amount = 10)
+            repository.loadJokesWithDelay() = newJokes
+            _loading.value = false
+        }
+    }
+
+    private fun handleError(error: String) {
+        _error.value = error
     }
 }

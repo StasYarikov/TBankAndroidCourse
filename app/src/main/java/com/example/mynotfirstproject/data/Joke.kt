@@ -3,6 +3,8 @@ package com.example.mynotfirstproject.data
 import androidx.annotation.IdRes
 import java.util.UUID
 
+
+@Serializable
 data class Joke(
     val id: String = UUID.randomUUID().toString(),
     val category: String,
