@@ -10,6 +10,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.JokeActivity
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.databinding.JokeListFragmentBinding
@@ -76,8 +78,16 @@ class JokeListFragment : Fragment() {
                 adapter.setNewData(jokes)
             }
         }
+        viewModel.progressLiveData.observe(viewLifecycleOwner) { progressBar ->
+            if (progressBar) {
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+            }
+        }
         viewModel.error.observe(viewLifecycleOwner) { error ->
             showError(error)
+            Log.d("Kek", error)
         }
     }
 
@@ -87,6 +97,7 @@ class JokeListFragment : Fragment() {
 
     private fun createRecyclerViewList() {
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.addOnScrollListener(viewModel.scrollListener)
     }
 
     private fun openJokeDetails(jokeId: Int) {

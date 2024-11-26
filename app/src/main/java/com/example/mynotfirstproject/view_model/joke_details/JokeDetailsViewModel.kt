@@ -24,7 +24,6 @@ class JokeDetailsViewModel(private val repository: JokeRepository) : ViewModel()
             handleError("Invalid joke data!")
         } else {
             val item = repository.getJokes().value?.get(position)
-            Log.d("Checking", repository.getJokes().value.toString())
             if (item != null) {
                 repository.selectJoke(item)
             } else {

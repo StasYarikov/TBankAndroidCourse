@@ -35,9 +35,10 @@ object JokeGenerator {
     private fun generateJoke(index: Int): Joke {
         return Joke(
             category = jokes[index][0],
-            question = jokes[index][1],
-            answer = jokes[index][2],
-            picture = generateRandomPicture()
+            setup = jokes[index][1],
+            delivery = jokes[index][2],
+            picture = generateRandomPicture(),
+            label = "Local"
         )
     }
 
