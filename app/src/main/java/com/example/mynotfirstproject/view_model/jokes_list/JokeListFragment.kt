@@ -87,7 +87,7 @@ class JokeListFragment : Fragment() {
         }
         viewModel.error.observe(viewLifecycleOwner) { error ->
             showError(error)
-            Log.d("Kek", error)
+            Log.d("Checking", error)
         }
     }
 

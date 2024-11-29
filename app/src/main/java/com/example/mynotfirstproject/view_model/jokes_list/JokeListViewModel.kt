@@ -11,7 +11,6 @@ import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.data.JokeApiResponse
 import com.example.mynotfirstproject.data.JokeGenerator
 import com.example.mynotfirstproject.data.JokeRepository
-import com.example.mynotfirstproject.data.RetrofitInstance
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

@@ -6,7 +6,7 @@ import java.util.UUID
 
 @Serializable
 data class Joke(
-    @SerialName("id")
+//    @SerialName("joke_id")
     val id: String = UUID.randomUUID().toString(),
     @SerialName("category")
     val category: String,
@@ -14,7 +14,6 @@ data class Joke(
     val setup: String,
     @SerialName("delivery")
     val delivery: String,
-    @SerialName("picture")
     val picture: Int? = null,
     val label: String? = null
 )

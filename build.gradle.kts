@@ -2,7 +2,6 @@
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.8.0"
 }
 
 buildscript {
@@ -11,6 +10,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(libs.kotlin.gradle.plugin)  // Убедитесь, что используете актуальную версию Kotlin
+        classpath(libs.kotlin.gradle.plugin)
+        classpath(libs.kotlin.serialization)
     }
 }
