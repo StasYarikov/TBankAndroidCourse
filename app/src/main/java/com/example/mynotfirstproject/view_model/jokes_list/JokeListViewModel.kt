@@ -27,23 +27,11 @@ class JokeListViewModel(
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
 
+    var loadingProcess: Boolean = false
+
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         handleError(throwable.toString())
         mutableProgressLiveData.postValue(false)
-    }
-
-    val scrollListener = object : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-
-            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-            val totalItemCount = layoutManager.itemCount
-            val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
-
-            if (totalItemCount == lastVisibleItemPosition + 1) {
-                loadMoreJokes()
-            }
-        }
     }
 
     fun generateJokes() {
