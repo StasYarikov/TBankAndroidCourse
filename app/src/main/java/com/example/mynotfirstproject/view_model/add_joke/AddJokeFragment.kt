@@ -47,7 +47,7 @@ class AddJokeFragment : Fragment() {
             val question = binding.questionInput.text.toString()
             val answer = binding.answerInput.text.toString()
 
-            if (viewModel.addJoke(category, question, answer) == "OK")
+            viewModel.addJoke(category, question, answer)
                 parentFragmentManager.popBackStack()
         }
     }

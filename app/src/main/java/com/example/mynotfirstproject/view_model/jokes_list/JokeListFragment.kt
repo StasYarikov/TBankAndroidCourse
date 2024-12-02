@@ -10,7 +10,10 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.JokeActivity
@@ -18,9 +21,10 @@ import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.databinding.JokeListFragmentBinding
 import com.example.mynotfirstproject.view_model.JokesViewModelFactory
 import com.example.mynotfirstproject.view_model.add_joke.AddJokeFragment
-import com.example.mynotfirstproject.view_model.add_joke.DeleteJokeFragment
 import com.example.mynotfirstproject.view_model.joke_details.JokeDetailsFragment
 import com.example.mynotfirstproject.view_model.jokes_list.recycler.adapter.JokeAdapter
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class JokeListFragment : Fragment() {
 
@@ -47,19 +51,9 @@ class JokeListFragment : Fragment() {
         initViewModel()
         createRecyclerViewList()
 
-        if (viewModel.jokes.value == null) {
-            viewModel.generateJokes()
-        }
         binding.addJoke.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, AddJokeFragment())
-                .addToBackStack(null)
-                .commit()
-        }
-
-        binding.deleteJoke.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, DeleteJokeFragment())
                 .addToBackStack(null)
                 .commit()
         }
@@ -68,15 +62,18 @@ class JokeListFragment : Fragment() {
     }
 
     private fun initViewModel() {
-
-        viewModel.jokes.observe(viewLifecycleOwner) { jokes ->
-            if (jokes.isEmpty()) {
-                binding.recyclerView.visibility = View.GONE
-                binding.emptyView.visibility = View.VISIBLE
-            } else {
-                binding.recyclerView.visibility = View.VISIBLE
-                binding.emptyView.visibility = View.GONE
-                adapter.setNewData(jokes)
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.jokesFlow.collectLatest { jokes ->
+                    if (jokes.isEmpty()) {
+                        binding.recyclerView.visibility = View.GONE
+                        binding.emptyView.visibility = View.VISIBLE
+                    } else {
+                        binding.recyclerView.visibility = View.VISIBLE
+                        binding.emptyView.visibility = View.GONE
+                        adapter.setNewData(jokes)
+                    }
+                }
             }
         }
         viewModel.progressLiveData.observe(viewLifecycleOwner) { progressBar ->

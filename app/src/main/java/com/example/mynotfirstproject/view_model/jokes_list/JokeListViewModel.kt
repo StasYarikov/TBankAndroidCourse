@@ -1,25 +1,28 @@
 package com.example.mynotfirstproject.view_model.jokes_list
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.data.JokeApiResponse
-import com.example.mynotfirstproject.data.JokeGenerator
 import com.example.mynotfirstproject.data.JokeRepository
+import com.example.mynotfirstproject.data.api.RetrofitInstance
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class JokeListViewModel(
     private val repository: JokeRepository
 ): ViewModel() {
 
-    val jokes: LiveData<List<Joke>> = repository.getJokes()
+    private val _jokesFlow = MutableStateFlow<List<Joke>>(emptyList())
+    val jokesFlow: StateFlow<List<Joke>> get() = _jokesFlow
 
     private val mutableProgressLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val progressLiveData: LiveData<Boolean> = mutableProgressLiveData
@@ -35,13 +38,15 @@ class JokeListViewModel(
     }
 
     fun generateJokes() {
-        repository.generateJokes()
+        viewModelScope.launch {
+            repository.generateJokes()
+        }
     }
 
     fun loadJokesWithDelay() {
         viewModelScope.launch {
             delay(2000)
-            repository.loadJokesWithDelay()
+            _jokesFlow.emit(repository.loadJokesWithDelay())
         }
     }
 
@@ -49,9 +54,24 @@ class JokeListViewModel(
         viewModelScope.launch(exceptionHandler) {
             mutableProgressLiveData.postValue(true)
             val response : JokeApiResponse = RetrofitInstance.api.getJokes()
-            repository.addJokes(response)
+            addJokes(response)
             mutableProgressLiveData.postValue(false)
         }
+    }
+
+    private fun addJokes(response: JokeApiResponse) {
+        viewModelScope.launch(exceptionHandler) {
+            val updatedList = _jokesFlow.first().toMutableList()
+            val newJokes = emptyList<Joke>().toMutableList()
+            response.jokes.forEach { newJoke ->
+                val existingJoke = updatedList.find { it.id == newJoke.id }
+                if (existingJoke == null) {
+                    newJokes.add(newJoke)
+                }
+            }
+            repository.addJokes(newJokes)
+        }
+
     }
 
     private fun handleError(error: String) {

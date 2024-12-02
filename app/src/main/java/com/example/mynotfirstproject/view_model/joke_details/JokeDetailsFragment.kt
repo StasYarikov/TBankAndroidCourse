@@ -7,10 +7,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.mynotfirstproject.JokeActivity
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.Joke
 import com.example.mynotfirstproject.databinding.JokeDetailsFragmentBinding
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class JokeDetailsFragment : Fragment() {
 
@@ -34,19 +39,30 @@ class JokeDetailsFragment : Fragment() {
 
         val jokePosition = arguments?.getInt(JOKE_POSITION_EXTRA) ?: -1
         viewModel.setJokePosition(jokePosition)
+
+        binding.deleteJoke.setOnClickListener {
+            viewModel.deleteJoke()
+            parentFragmentManager.popBackStack()
+        }
     }
 
     private fun initViewModel() {
-        viewModel.selectedJoke.observe(viewLifecycleOwner) { joke -> setupJokeData(joke) }
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.selectedJoke.collectLatest { joke ->
+                    setupJokeData(joke)
+                }
+            }
+        }
         viewModel.error.observe(viewLifecycleOwner) { showError(it) }
     }
 
-    private fun setupJokeData(joke: Joke) {
+    private fun setupJokeData(joke: Joke?) {
         with(binding) {
-            jokeAvatar.setImageResource(joke.picture ?: R.drawable.warning)
-            jokeCategory.text = joke.category
-            jokeQuestion.text = joke.setup
-            jokeAnswer.text = joke.delivery
+            jokeAvatar.setImageResource(joke?.picture ?: R.drawable.warning)
+            jokeCategory.text = joke?.category
+            jokeQuestion.text = joke?.setup
+            jokeAnswer.text = joke?.delivery
         }
     }
 

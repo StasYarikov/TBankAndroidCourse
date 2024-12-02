@@ -1,5 +1,7 @@
-import com.example.mynotfirstproject.data.JokeApiService
+package com.example.mynotfirstproject.data.api
+
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.serialization.ExperimentalSerializationApi
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -9,6 +11,7 @@ import okhttp3.MediaType.Companion.toMediaType
 object RetrofitInstance {
     private const val BASE_URL = "https://v2.jokeapi.dev/"
 
+    @OptIn(ExperimentalSerializationApi::class)
     val api: JokeApiService by lazy {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
