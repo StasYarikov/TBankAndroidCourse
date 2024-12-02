@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.JokeActivity
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.databinding.JokeListFragmentBinding
@@ -76,8 +79,27 @@ class JokeListFragment : Fragment() {
                 adapter.setNewData(jokes)
             }
         }
+        viewModel.progressLiveData.observe(viewLifecycleOwner) { progressBar ->
+            viewModel.loadingProcess = !viewModel.loadingProcess
+            binding.progressBar.isVisible = progressBar
+        }
         viewModel.error.observe(viewLifecycleOwner) { error ->
             showError(error)
+        }
+    }
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val totalItemCount = layoutManager.itemCount
+            val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
+
+            if (totalItemCount == lastVisibleItemPosition + 1) {
+                if (!viewModel.loadingProcess)
+                    viewModel.loadMoreJokes()
+            }
         }
     }
 
@@ -87,6 +109,7 @@ class JokeListFragment : Fragment() {
 
     private fun createRecyclerViewList() {
         binding.recyclerView.adapter = adapter
+        binding.recyclerView.addOnScrollListener(scrollListener)
     }
 
     private fun openJokeDetails(jokeId: Int) {

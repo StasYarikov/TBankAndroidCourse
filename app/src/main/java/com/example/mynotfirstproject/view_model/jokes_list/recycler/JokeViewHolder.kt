@@ -1,7 +1,5 @@
 package com.example.mynotfirstproject.view_model.jokes_list.recycler
 
-import android.content.Context
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.Joke
@@ -14,9 +12,10 @@ class JokeViewHolder(
 
     fun bind(joke: Joke, position: Int) {
         binding.categoryField.text = joke.category
-        binding.questionField.text = joke.question
-        binding.answerField.text = joke.answer
+        binding.questionField.text = joke.setup
+        binding.answerField.text = joke.delivery
         binding.picture.setImageResource(joke.picture ?: R.drawable.warning)
+        binding.label.text = (joke.label) ?: "From the Internet"
 
         binding.root.setOnClickListener() {
             clickListener(position)

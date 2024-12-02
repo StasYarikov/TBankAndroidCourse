@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -40,9 +41,13 @@ android {
 }
 
 dependencies {
-    val fragment_version = "1.8.4"
-
-    implementation("androidx.fragment:fragment-ktx:$fragment_version")
+    implementation(libs.retrofit)
+    implementation(libs.kotlinx.serialization.json.v163)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+    implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
