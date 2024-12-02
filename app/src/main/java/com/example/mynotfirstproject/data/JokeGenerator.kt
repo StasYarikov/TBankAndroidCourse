@@ -34,6 +34,7 @@ object JokeGenerator {
 
     private fun generateJoke(index: Int): Joke {
         return Joke(
+            id = index,
             category = jokes[index][0],
             setup = jokes[index][1],
             delivery = jokes[index][2],

@@ -26,7 +26,13 @@ class JokeRepository {
 
     fun addJokes(jokes: JokeApiResponse) {
         val updatedList = jokesLiveData.value.orEmpty().toMutableList()
-        updatedList.addAll(jokes.jokes)
+
+        jokes.jokes.forEach { newJoke ->
+            val existingJoke = updatedList.find { it.id == newJoke.id }
+
+            if (existingJoke == null)
+                updatedList.add(newJoke)
+        }
         jokesLiveData.value = updatedList
     }
 

@@ -13,8 +13,17 @@ class AddJokeViewModel(private val repository: JokeRepository) : ViewModel() {
     val error: LiveData<String> = _error
 
     fun addJoke(category: String, question: String, answer: String,) : String {
+
+        val currentJokes = repository.getJokes().value ?: emptyList()
+        val uniqueId = (currentJokes.maxOfOrNull { it.id } ?: 0) + 1
+
         if (category.isNotBlank() && question.isNotBlank() && answer.isNotBlank()) {
-            repository.addJoke(Joke(category = category, setup = question, delivery = answer, picture = JokeGenerator.generateRandomPicture()))
+            repository.addJoke(Joke(id = uniqueId,
+                category = category,
+                setup = question,
+                delivery = answer,
+                picture = JokeGenerator.generateRandomPicture(),
+                label = "Local"))
             return "OK"
         } else {
             handleError("Заполните все поля!")
