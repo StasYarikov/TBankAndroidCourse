@@ -16,7 +16,8 @@ import com.example.mynotfirstproject.view_model.jokes_list.JokeListViewModel
 class JokeActivity : AppCompatActivity() {
 
     private val repository by lazy { JokeRepository(
-        AppDatabase.INSTANCE.jokeDao()
+        AppDatabase.INSTANCE.jokeDao(),
+        AppDatabase.INSTANCE.networkDao()
     ) }
     val viewModelFactory by lazy { JokesViewModelFactory(repository) }
     private lateinit var binding: ActivityJokeBinding

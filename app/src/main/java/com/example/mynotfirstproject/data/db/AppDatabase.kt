@@ -4,12 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.mynotfirstproject.data.Joke
-import com.example.mynotfirstproject.data.JokeApiResponse
+import com.example.mynotfirstproject.data.Jokes
+import com.example.mynotfirstproject.data.NetworkJokes
 
-@Database(entities = [Joke::class], version = 1)
+@Database(entities = [NetworkJokes::class, Jokes::class], version = 3)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun jokeDao(): JokeDao
+    abstract fun networkDao(): NetworkJokeDao
 
     companion object {
         @Volatile
@@ -20,7 +21,9 @@ abstract class AppDatabase : RoomDatabase() {
                 context.applicationContext,
                 AppDatabase::class.java,
                 "app_database"
-            ).build()
+            )
+                .fallbackToDestructiveMigration()
+                .build()
             INSTANCE = instance
         }
     }

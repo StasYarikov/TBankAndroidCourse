@@ -72,7 +72,7 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:text="@string/textview"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/idField"
         app:layout_constraintStart_toEndOf="@+id/picture"
         app:layout_constraintTop_toBottomOf="@+id/question" />
 
@@ -100,4 +100,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="From the Internet" />
+
+    <TextView
+        android:id="@+id/idField"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Some id"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label"
+        app:layout_constraintStart_toEndOf="@id/questionField"
+
+        />
 </androidx.constraintlayout.widget.ConstraintLayout>

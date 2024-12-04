@@ -1,6 +1,7 @@
 package com.example.mynotfirstproject.view_model.joke_details
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.mynotfirstproject.JokeActivity
 import com.example.mynotfirstproject.R
-import com.example.mynotfirstproject.data.Joke
+import com.example.mynotfirstproject.data.JokeTypes
+import com.example.mynotfirstproject.data.NetworkJokes
 import com.example.mynotfirstproject.databinding.JokeDetailsFragmentBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -35,34 +37,53 @@ class JokeDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initViewModel()
 
         val jokePosition = arguments?.getInt(JOKE_POSITION_EXTRA) ?: -1
-        viewModel.setJokePosition(jokePosition)
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.setJokePosition(jokePosition)
+                initViewModel()
+            }
+        }
 
         binding.deleteJoke.setOnClickListener {
-            viewModel.deleteJoke()
-            parentFragmentManager.popBackStack()
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.deleteJoke()
+                parentFragmentManager.popBackStack()
+            }
         }
     }
 
-    private fun initViewModel() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.selectedJoke.collectLatest { joke ->
-                    setupJokeData(joke)
-                }
-            }
+    private suspend fun initViewModel() {
+        viewModel.selectedJokes.collectLatest { joke ->
+            Log.d("Checking", "${viewModel.selectedJokes.value}")
+            setupJokeData(joke)
         }
         viewModel.error.observe(viewLifecycleOwner) { showError(it) }
     }
 
-    private fun setupJokeData(joke: Joke?) {
-        with(binding) {
-            jokeAvatar.setImageResource(joke?.picture ?: R.drawable.warning)
-            jokeCategory.text = joke?.category
-            jokeQuestion.text = joke?.setup
-            jokeAnswer.text = joke?.delivery
+    private fun setupJokeData(jokeTypes: JokeTypes?) {
+        when (jokeTypes) {
+            is JokeTypes.MyJokes -> {
+                with(binding) {
+                    jokeAvatar.setImageResource(jokeTypes.data.picture?: R.drawable.warning)
+                    jokeCategory.text = jokeTypes.data.category
+                    jokeQuestion.text = jokeTypes.data.setup
+                    jokeAnswer.text = jokeTypes.data.delivery
+                }
+            }
+            is JokeTypes.JokesFromNetwork -> {
+                with(binding) {
+                    jokeAvatar.setImageResource(jokeTypes.data.picture?: R.drawable.warning)
+                    jokeCategory.text = jokeTypes.data.category
+                    jokeQuestion.text = jokeTypes.data.setup
+                    jokeAnswer.text = jokeTypes.data.delivery
+                }
+            }
+            null -> {
+                showError("Something happened")
+                parentFragmentManager.popBackStack()
+            }
         }
     }
 
