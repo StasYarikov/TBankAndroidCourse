@@ -74,10 +74,10 @@ class JokeListViewModel(
         mutableProgressLiveData.postValue(false)
     }
 
-    fun deleteAllJokes() {
-        viewModelScope.launch {
-            repository.deleteAllJokes()
-        }
+    suspend fun deleteAllJokes() {
+        repository.deleteAllJokes()
+        _jokesFlow.value = emptyList()
+        _networkJokesFlow.value = emptyList()
     }
 
     private suspend fun addJokes(response: JokeApiResponse) {
@@ -101,5 +101,11 @@ class JokeListViewModel(
 
     fun resetNetworkJokes() {
         _networkJokesFlow.value = emptyList()
+    }
+
+    suspend fun updateNetworkJokes() {
+        if (_networkJokesFlow.value.isNotEmpty()) {
+            _networkJokesFlow.value = repository.getCacheJokes()
+        }
     }
 }

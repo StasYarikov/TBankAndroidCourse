@@ -17,6 +17,7 @@ import com.example.mynotfirstproject.data.JokeTypes
 import com.example.mynotfirstproject.data.NetworkJokes
 import com.example.mynotfirstproject.databinding.JokeDetailsFragmentBinding
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class JokeDetailsFragment : Fragment() {
@@ -45,7 +46,7 @@ class JokeDetailsFragment : Fragment() {
                 initViewModel()
             }
         }
-
+        
         binding.deleteJoke.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.deleteJoke()

@@ -56,33 +56,36 @@ class JokeListFragment : Fragment() {
         }
 
         binding.deleteAllJokes.setOnClickListener {
-            viewModel.deleteAllJokes()
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.deleteAllJokes()
+                adapter.setNewData(emptyList())
+            }
         }
 //        viewModel.generateJokes()
-        viewModel.resetNetworkJokes()
-        Log.d("Checking", "Here we go again")
         viewModel.loadJokesWithDelay()
-        Log.d("Checking", "${viewModel.loadingProcess}")
     }
 
     private fun initViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.jokesFlow.collect { jokes ->
-                    if (jokes.isEmpty()) {
+                    if (jokes.isEmpty() && viewModel.networkJokesFlow.value.isEmpty()) {
                         binding.recyclerView.visibility = View.GONE
                         binding.emptyView.visibility = View.VISIBLE
                     } else {
                         binding.recyclerView.visibility = View.VISIBLE
                         binding.emptyView.visibility = View.GONE
-                        val jokeTypesList: List<JokeTypes> = jokes.map { JokeTypes.MyJokes(it) }
+                        val jokeTypesList: MutableList<JokeTypes> = jokes.map { JokeTypes.MyJokes(it) }.toMutableList()
+                        if (viewModel.networkJokesFlow.value.isNotEmpty())
+                            viewModel.updateNetworkJokes()
+                        jokeTypesList.addAll(viewModel.networkJokesFlow.value.map { JokeTypes.JokesFromNetwork(it) })
                         adapter.setNewData(jokeTypesList)
+                        adapter.notifyItemRangeChanged(0, jokeTypesList.size)
                     }
                 }
             }
         }
         viewModel.progressLiveData.observe(viewLifecycleOwner) { progressBar ->
-            Log.d("Checking", "changed")
             viewModel.loadingProcess = progressBar
             binding.progressBar.isVisible = progressBar
         }
@@ -90,6 +93,7 @@ class JokeListFragment : Fragment() {
             showError(error)
             val jokeTypesList: MutableList<JokeTypes> = viewModel.jokesFlow.value.map { JokeTypes.MyJokes(it) }.toMutableList()
             jokeTypesList.addAll(viewModel.networkJokesFlow.value.map { JokeTypes.JokesFromNetwork(it) })
+            Log.d("Checking", "is here")
             adapter.setNewData(jokeTypesList)
         }
     }
