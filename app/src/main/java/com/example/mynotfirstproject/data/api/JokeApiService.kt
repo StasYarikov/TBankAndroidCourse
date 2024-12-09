@@ -1,5 +1,6 @@
-package com.example.mynotfirstproject.data
+package com.example.mynotfirstproject.data.api
 
+import com.example.mynotfirstproject.data.JokeApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

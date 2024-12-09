@@ -1,48 +1,78 @@
 package com.example.mynotfirstproject.data
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import android.util.Log
+import com.example.mynotfirstproject.data.db.JokeDao
+import com.example.mynotfirstproject.data.db.NetworkJokeDao
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 
-class JokeRepository {
-    private val jokesLiveData = MutableLiveData<List<Joke>>()
-    private val selectedJokeLiveData = MutableLiveData<Joke>()
+class JokeRepository(
+    private val jokeDao: JokeDao,
+    private val networkDao: NetworkJokeDao
+    ) {
 
     val generator = JokeGenerator
 
-    fun getJokes(): LiveData<List<Joke>> = jokesLiveData
+    fun getJokes(): Flow<List<Jokes>> = jokeDao.getAllJokes()
 
-    fun generateJokes() {
-        jokesLiveData.value = generator.generateJokes()
+    suspend fun generateJokes() {
+        jokeDao.insertAll(generator.generateJokes())
     }
 
-    fun addJoke(joke: Joke) {
-        val updatedList = jokesLiveData.value.orEmpty().toMutableList()
-        updatedList.add(joke)
-        jokesLiveData.value = updatedList
+    suspend fun addNetworkJoke(networkJokes: NetworkJokes) {
+        networkDao.insert(networkJokes)
     }
 
-    fun addJokes(jokes: JokeApiResponse) {
-        val updatedList = jokesLiveData.value.orEmpty().toMutableList()
-        updatedList.addAll(jokes.jokes)
-        jokesLiveData.value = updatedList
+    suspend fun addJoke(joke: Jokes) {
+        jokeDao.insert(joke)
     }
 
-    fun deleteJoke(jokeNumber: Int) {
-        val updatedList = jokesLiveData.value.orEmpty().toMutableList()
-        updatedList.removeAt(jokeNumber)
-        jokesLiveData.value = updatedList
+    suspend fun addJokes(networkJokes: MutableList<NetworkJokes>) {
+        networkDao.insertAllFromNetwork(networkJokes)
     }
 
-    fun selectJoke(joke: Joke) {
-        selectedJokeLiveData.value = joke
+    suspend fun deleteJoke(jokeId: Int) {
+        jokeDao.deleteJokeById(jokeId)
     }
 
-    fun loadJokesWithDelay() {
-        jokesLiveData.postValue(jokesLiveData.value)
+    suspend fun getJokeById(jokeId: Int): JokeTypes {
+        val joke = jokeDao.getJokeById(jokeId).first()
+        if (joke != null) return JokeTypes.MyJokes(joke)
+        else {
+            return networkDao.getJokeById(jokeId).first()!!.let { JokeTypes.JokesFromNetwork(it) }
+        }
     }
 
-    fun getSelectedJoke(): LiveData<Joke> = selectedJokeLiveData
+    suspend fun deleteNetworkJoke(jokeId: Int) {
+        networkDao.deleteNetworkJokeById(jokeId)
+    }
+
+    suspend fun deleteAllJokes() {
+        jokeDao.deleteAllJokes()
+        networkDao.deleteAllJokes()
+    }
+
+    private val CACHE_EXPIRATION_TIME = 24 * 60 * 60 * 1000
+
+    suspend fun getCacheJokes(): List<NetworkJokes> {
+        val currentTime = System.currentTimeMillis()
+
+        val currentCache: List<NetworkJokes> = networkDao.getAllNetworkJokes().first().toList()
+
+        if (currentCache.isNotEmpty()) {
+            val lastUpdate = currentCache.first().timestamp
+            if (currentTime - lastUpdate <= CACHE_EXPIRATION_TIME) {
+
+                return currentCache.map {
+                    it.label = "From cache"
+                    it
+                }
+            }
+            else {
+                networkDao.getAllNetworkJokes()
+            }
+        }
+        return emptyList()
+    }
 }

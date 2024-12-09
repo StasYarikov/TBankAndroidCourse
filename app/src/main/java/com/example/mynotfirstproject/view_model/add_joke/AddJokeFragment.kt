@@ -4,22 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.mynotfirstproject.JokeActivity
-import com.example.mynotfirstproject.data.Joke
-import com.example.mynotfirstproject.data.JokeGenerator
 import com.example.mynotfirstproject.databinding.FragmentAddJokeBinding
-import com.example.mynotfirstproject.databinding.JokeDetailsFragmentBinding
-import com.example.mynotfirstproject.view_model.JokesViewModelFactory
-import com.example.mynotfirstproject.view_model.joke_details.JokeDetailsViewModel
-import com.example.mynotfirstproject.view_model.jokes_list.JokeListFragment
-import com.example.mynotfirstproject.view_model.jokes_list.JokeListViewModel
+import kotlinx.coroutines.launch
 
 class AddJokeFragment : Fragment() {
 
@@ -47,8 +40,12 @@ class AddJokeFragment : Fragment() {
             val question = binding.questionInput.text.toString()
             val answer = binding.answerInput.text.toString()
 
-            if (viewModel.addJoke(category, question, answer) == "OK")
-                parentFragmentManager.popBackStack()
+            viewLifecycleOwner.lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    if (viewModel.addJoke(category, question, answer) == "Success")
+                        parentFragmentManager.popBackStack()
+                }
+            }
         }
     }
 

@@ -4,7 +4,7 @@ import com.example.mynotfirstproject.R
 
 object JokeGenerator {
 
-    val data = mutableListOf<Joke>()
+    val data = mutableListOf<Jokes>()
 
     private val jokes = arrayOf(
         arrayOf("Kids", "What do kids play when their mom is using the phone?", "Bored games"),
@@ -22,7 +22,7 @@ object JokeGenerator {
         R.drawable.laugh
     )
 
-    fun generateJokes(): List<Joke> {
+    fun generateJokes(): List<Jokes> {
         data.clear()
         data.addAll(buildList {
             for (i in 0..6) {
@@ -32,8 +32,9 @@ object JokeGenerator {
         return data
     }
 
-    private fun generateJoke(index: Int): Joke {
-        return Joke(
+    private fun generateJoke(index: Int): Jokes {
+        return Jokes(
+            id = index,
             category = jokes[index][0],
             setup = jokes[index][1],
             delivery = jokes[index][2],
