@@ -4,9 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.example.mynotfirstproject.data.JokeTypes
-import com.example.mynotfirstproject.data.Jokes
-import com.example.mynotfirstproject.data.NetworkJokes
+import com.example.mynotfirstproject.data.entity.Jokes
 import kotlinx.coroutines.flow.Flow
 
 @Dao

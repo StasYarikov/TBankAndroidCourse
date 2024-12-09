@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.mynotfirstproject.data.Jokes
-import com.example.mynotfirstproject.data.NetworkJokes
+import com.example.mynotfirstproject.data.entity.Jokes
+import com.example.mynotfirstproject.data.entity.NetworkJokes
 
 @Database(entities = [NetworkJokes::class, Jokes::class], version = 3)
 abstract class AppDatabase : RoomDatabase() {

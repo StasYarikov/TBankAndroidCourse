@@ -1,6 +1,7 @@
 package com.example.mynotfirstproject.data
 
 import com.example.mynotfirstproject.R
+import com.example.mynotfirstproject.data.entity.Jokes
 
 object JokeGenerator {
 

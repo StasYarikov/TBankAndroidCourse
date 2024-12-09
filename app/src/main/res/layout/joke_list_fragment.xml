@@ -6,7 +6,7 @@
     android:id="@+id/fragmentJokeList"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view_model.jokes_list.JokeListFragment">
+    tools:context=".presentation.jokes_list.JokeListFragment">
 
     <TextView
         android:id="@+id/emptyView"
