@@ -1,9 +1,11 @@
-package com.example.mynotfirstproject.data.db
+package com.example.mynotfirstproject.data.datasource
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.mynotfirstproject.data.datasource.local.JokeDao
+import com.example.mynotfirstproject.data.datasource.remote.NetworkJokeDao
 import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.data.entity.NetworkJokes
 

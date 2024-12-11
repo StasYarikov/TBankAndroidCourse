@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.presentation.JokeActivity
 import com.example.mynotfirstproject.R
-import com.example.mynotfirstproject.data.JokeTypes
+import com.example.mynotfirstproject.domain.entity.JokeTypes
 import com.example.mynotfirstproject.databinding.JokeListFragmentBinding
 import com.example.mynotfirstproject.presentation.add_joke.AddJokeFragment
 import com.example.mynotfirstproject.presentation.joke_details.JokeDetailsFragment
@@ -69,18 +69,14 @@ class JokeListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.jokesFlow.collect { jokes ->
-                    if (jokes.isEmpty() && viewModel.networkJokesFlow.value.isEmpty()) {
+                    if (jokes.isEmpty()) {
                         binding.recyclerView.visibility = View.GONE
                         binding.emptyView.visibility = View.VISIBLE
                     } else {
                         binding.recyclerView.visibility = View.VISIBLE
                         binding.emptyView.visibility = View.GONE
-                        val jokeTypesList: MutableList<JokeTypes> = jokes.map { JokeTypes.MyJokes(it) }.toMutableList()
-                        if (viewModel.networkJokesFlow.value.isNotEmpty())
-                            viewModel.updateNetworkJokes()
-                        jokeTypesList.addAll(viewModel.networkJokesFlow.value.map { JokeTypes.JokesFromNetwork(it) })
-                        adapter.setNewData(jokeTypesList)
-                        adapter.notifyItemRangeChanged(0, jokeTypesList.size)
+                        adapter.setNewData(jokes)
+                        adapter.notifyItemRangeChanged(0, jokes.size)
                     }
                 }
             }
@@ -91,10 +87,7 @@ class JokeListFragment : Fragment() {
         }
         viewModel.error.observe(viewLifecycleOwner) { error ->
             showError(error)
-            val jokeTypesList: MutableList<JokeTypes> = viewModel.jokesFlow.value.map { JokeTypes.MyJokes(it) }.toMutableList()
-            jokeTypesList.addAll(viewModel.networkJokesFlow.value.map { JokeTypes.JokesFromNetwork(it) })
-            Log.d("Checking", "is here")
-            adapter.setNewData(jokeTypesList)
+            adapter.setNewData(viewModel.jokesFlow.value)
         }
     }
 
@@ -107,13 +100,10 @@ class JokeListFragment : Fragment() {
             val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
 
             if (totalItemCount == lastVisibleItemPosition + 1) {
-                Log.d("Checking", "$totalItemCount   $lastVisibleItemPosition    ${viewModel.loadingProcess}")
                 if (!viewModel.loadingProcess) {
                     viewLifecycleOwner.lifecycleScope.launch(viewModel.exceptionHandler) {
                         viewModel.loadMoreJokes()
-                        val jokeTypesList: MutableList<JokeTypes> = viewModel.jokesFlow.value.map { JokeTypes.MyJokes(it) }.toMutableList()
-                        jokeTypesList.addAll(viewModel.networkJokesFlow.value.map { JokeTypes.JokesFromNetwork(it) })
-                        adapter.setNewData(jokeTypesList)
+                        adapter.setNewData(viewModel.jokesFlow.value)
                     }
                 }
             }
@@ -130,20 +120,23 @@ class JokeListFragment : Fragment() {
     }
 
     private fun openJokeDetails(jokeId: Int) {
-        Log.d("Checking", "$jokeId")
-        val localJokesSize = viewModel.jokesFlow.value.size
         val realJokeId : Int
-        if (localJokesSize > jokeId) {
-            realJokeId = viewModel.jokesFlow.value[jokeId].id
+        val joke = viewModel.jokesFlow.value.getOrNull(jokeId)
+
+        if (joke != null) {
+            when (joke) {
+                is JokeTypes.MyJokes -> realJokeId = joke.data.id
+                is JokeTypes.JokesFromNetwork -> realJokeId = joke.data.id
+            }
+            val fragment = JokeDetailsFragment.newInstance(realJokeId)
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, fragment)
+                .addToBackStack(null)
+                .commit()
         }
         else {
-            realJokeId = viewModel.networkJokesFlow.value[jokeId - localJokesSize].id
+            showError("Попытка открыть несуществующий элемент")
         }
-        val fragment = JokeDetailsFragment.newInstance(realJokeId)
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .addToBackStack(null)
-            .commit()
     }
 
     override fun onDestroyView() {

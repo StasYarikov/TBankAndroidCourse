@@ -1,25 +1,31 @@
 package com.example.mynotfirstproject.domain.repository
 
-import com.example.mynotfirstproject.domain.entity.JokeItem
+import com.example.mynotfirstproject.data.entity.JokeApiResponse
+import com.example.mynotfirstproject.data.entity.Jokes
+import com.example.mynotfirstproject.data.entity.NetworkJokes
+import com.example.mynotfirstproject.domain.entity.JokeTypes
 import kotlinx.coroutines.flow.Flow
 
 interface JokesRepository {
 
-    fun getJokes(): Flow<List<JokeItem>>
+    suspend fun getJokes(): List<JokeTypes>
+
+    suspend fun loadMoreJokes(): JokeApiResponse
 
     suspend fun generateJokes()
 
-    suspend fun addJoke(jokeItem: JokeItem)
+    suspend fun addJoke(joke: JokeTypes)
 
-    suspend fun addJokes(jokes: List<JokeItem>)
+    suspend fun addJokes(jokes: List<JokeTypes>)
 
-    suspend fun getJokeById(jokeId: Int): JokeItem
+    suspend fun getJokeById(jokeId: Int): JokeTypes
 
     suspend fun deleteJoke(jokeId: Int)
 
+    suspend fun deleteNetworkJoke(jokeId: Int)
+
     suspend fun deleteAllJokes()
 
-    suspend fun deleteJokeById(jokeId: Int)
-
+    suspend fun getCacheJokes(): List<JokeTypes>
 
 }

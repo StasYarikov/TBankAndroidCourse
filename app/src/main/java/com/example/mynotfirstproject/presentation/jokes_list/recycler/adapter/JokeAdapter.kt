@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.example.mynotfirstproject.data.JokeTypes
+import com.example.mynotfirstproject.domain.entity.JokeTypes
 import com.example.mynotfirstproject.databinding.JokeItemBinding
 import com.example.mynotfirstproject.presentation.jokes_list.recycler.JokesFromInternetViewHolder
 import com.example.mynotfirstproject.presentation.jokes_list.recycler.MyJokesViewHolder

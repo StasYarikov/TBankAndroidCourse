@@ -1,66 +1,82 @@
 package com.example.mynotfirstproject.data.repository
 
 import com.example.mynotfirstproject.data.JokeGenerator
-import com.example.mynotfirstproject.data.JokeTypes
-import com.example.mynotfirstproject.data.db.JokeDao
-import com.example.mynotfirstproject.data.db.NetworkJokeDao
+import com.example.mynotfirstproject.domain.entity.JokeTypes
+import com.example.mynotfirstproject.data.datasource.remote.RemoteDataSource
+import com.example.mynotfirstproject.data.datasource.local.JokeDao
+import com.example.mynotfirstproject.data.datasource.local.LocalDataSource
+import com.example.mynotfirstproject.data.datasource.remote.NetworkJokeDao
+import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.data.entity.NetworkJokes
+import com.example.mynotfirstproject.domain.repository.JokesRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
 class JokeRepository(
-    private val jokeDao: JokeDao,
-    private val networkDao: NetworkJokeDao
-    ) {
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataSource: LocalDataSource,
+    ) : JokesRepository {
 
     val generator = JokeGenerator
 
-    fun getJokes(): Flow<List<Jokes>> = jokeDao.getAllJokes()
-
-    suspend fun generateJokes() {
-        jokeDao.insertAll(JokeGenerator.generateJokes())
+    override suspend fun getJokes(): List<JokeTypes> {
+        val jokesList: List<Jokes> = localDataSource.getAllJokes().first()
+        val jokeTypesList: List<JokeTypes> = jokesList.map { JokeTypes.MyJokes(it) }
+        return jokeTypesList
     }
 
-    suspend fun addNetworkJoke(networkJokes: NetworkJokes) {
-        networkDao.insert(networkJokes)
+    override suspend fun loadMoreJokes(): JokeApiResponse {
+        return remoteDataSource.getJokes()
     }
 
-    suspend fun addJoke(joke: Jokes) {
-        jokeDao.insert(joke)
+    override suspend fun generateJokes() {
+        localDataSource.insertAll(generator.generateJokes())
     }
 
-    suspend fun addJokes(networkJokes: MutableList<NetworkJokes>) {
-        networkDao.insertAllFromNetwork(networkJokes)
-    }
-
-    suspend fun deleteJoke(jokeId: Int) {
-        jokeDao.deleteJokeById(jokeId)
-    }
-
-    suspend fun getJokeById(jokeId: Int): JokeTypes {
-        val joke = jokeDao.getJokeById(jokeId).first()
-        if (joke != null) return JokeTypes.MyJokes(joke)
-        else {
-            return networkDao.getJokeById(jokeId).first()!!.let { JokeTypes.JokesFromNetwork(it) }
+    override suspend fun addJoke(joke: JokeTypes) {
+        when (joke) {
+            is JokeTypes.MyJokes -> localDataSource.insert(joke.data)
+            is JokeTypes.JokesFromNetwork -> remoteDataSource.insert(joke.data)
         }
     }
 
-    suspend fun deleteNetworkJoke(jokeId: Int) {
-        networkDao.deleteNetworkJokeById(jokeId)
+    override suspend fun addJokes(jokes: List<JokeTypes>) {
+        jokes.forEach {
+            when (it) {
+                is JokeTypes.MyJokes -> localDataSource.insert(it.data)
+                is JokeTypes.JokesFromNetwork -> remoteDataSource.insert(it.data)
+            }
+        }
     }
 
-    suspend fun deleteAllJokes() {
-        jokeDao.deleteAllJokes()
-        networkDao.deleteAllJokes()
+    override suspend fun deleteJoke(jokeId: Int) {
+        localDataSource.deleteJokeById(jokeId)
+    }
+
+    override suspend fun getJokeById(jokeId: Int): JokeTypes {
+        val joke = localDataSource.getJokeById(jokeId).first()
+        if (joke != null) return JokeTypes.MyJokes(joke)
+        else {
+            return remoteDataSource.getJokeById(jokeId).first()!!.let { JokeTypes.JokesFromNetwork(it) }
+        }
+    }
+
+    override suspend fun deleteNetworkJoke(jokeId: Int) {
+        remoteDataSource.deleteNetworkJokeById(jokeId)
+    }
+
+    override suspend fun deleteAllJokes() {
+        localDataSource.deleteAllJokes()
+        remoteDataSource.deleteAllJokes()
     }
 
     private val CACHE_EXPIRATION_TIME = 24 * 60 * 60 * 1000
 
-    suspend fun getCacheJokes(): List<NetworkJokes> {
+    override suspend fun getCacheJokes(): List<JokeTypes> {
         val currentTime = System.currentTimeMillis()
 
-        val currentCache: List<NetworkJokes> = networkDao.getAllNetworkJokes().first().toList()
+        val currentCache: List<NetworkJokes> = remoteDataSource.getAllNetworkJokes().first().toList()
 
         if (currentCache.isNotEmpty()) {
             val lastUpdate = currentCache.first().timestamp
@@ -68,11 +84,11 @@ class JokeRepository(
 
                 return currentCache.map {
                     it.label = "From cache"
-                    it
+                    JokeTypes.JokesFromNetwork(it)
                 }
             }
             else {
-                networkDao.getAllNetworkJokes()
+                remoteDataSource.getAllNetworkJokes()
             }
         }
         return emptyList()

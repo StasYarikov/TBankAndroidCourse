@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.mynotfirstproject.presentation.JokeActivity
 import com.example.mynotfirstproject.R
-import com.example.mynotfirstproject.data.JokeTypes
+import com.example.mynotfirstproject.domain.entity.JokeTypes
 import com.example.mynotfirstproject.databinding.JokeDetailsFragmentBinding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

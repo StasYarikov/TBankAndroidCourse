@@ -4,7 +4,12 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.repository.JokeRepository
-import com.example.mynotfirstproject.data.db.AppDatabase
+import com.example.mynotfirstproject.data.datasource.AppDatabase
+import com.example.mynotfirstproject.data.datasource.local.LocalDataSource
+import com.example.mynotfirstproject.data.datasource.local.LocalDataSourceImpl
+import com.example.mynotfirstproject.data.datasource.remote.JokeApiService
+import com.example.mynotfirstproject.data.datasource.remote.RemoteDataSourceImpl
+import com.example.mynotfirstproject.data.datasource.remote.RetrofitInstance
 import com.example.mynotfirstproject.databinding.ActivityJokeBinding
 import com.example.mynotfirstproject.presentation.viewModelFactory.JokesViewModelFactory
 import com.example.mynotfirstproject.presentation.jokes_list.JokeListFragment
@@ -12,8 +17,13 @@ import com.example.mynotfirstproject.presentation.jokes_list.JokeListFragment
 class JokeActivity : AppCompatActivity() {
 
     private val repository by lazy { JokeRepository(
-        AppDatabase.INSTANCE.jokeDao(),
-        AppDatabase.INSTANCE.networkDao()
+        localDataSource = LocalDataSourceImpl(
+            AppDatabase.INSTANCE.jokeDao()
+        ),
+        remoteDataSource = RemoteDataSourceImpl(
+            networkJokeDao = AppDatabase.INSTANCE.networkDao(),
+            api = RetrofitInstance.api
+        )
     ) }
     val viewModelFactory by lazy { JokesViewModelFactory(repository) }
     private lateinit var binding: ActivityJokeBinding

@@ -1,7 +1,7 @@
 package com.example.mynotfirstproject.presentation.jokes_list.recycler.util
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.mynotfirstproject.data.JokeTypes
+import com.example.mynotfirstproject.domain.entity.JokeTypes
 
 class JokeDiffUtilCallback(
     private val oldList: List<JokeTypes>,

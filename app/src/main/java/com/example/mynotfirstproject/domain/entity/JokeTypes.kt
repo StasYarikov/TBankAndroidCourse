@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.data
+package com.example.mynotfirstproject.domain.entity
 
 import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.data.entity.NetworkJokes

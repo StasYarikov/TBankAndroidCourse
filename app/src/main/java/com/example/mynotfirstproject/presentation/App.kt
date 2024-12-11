@@ -1,7 +1,7 @@
 package com.example.mynotfirstproject.presentation
 
 import android.app.Application
-import com.example.mynotfirstproject.data.db.AppDatabase
+import com.example.mynotfirstproject.data.datasource.AppDatabase
 
 class App : Application() {
 
