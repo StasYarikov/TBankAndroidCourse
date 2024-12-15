@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.data.datasource.remote
+package com.example.mynotfirstproject.data.datasource.db.dao
 
 import androidx.room.Dao
 import androidx.room.Insert

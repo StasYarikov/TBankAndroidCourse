@@ -1,6 +1,7 @@
-package com.example.mynotfirstproject.data.datasource.local
+package com.example.mynotfirstproject.data.datasource.db.implementations
 
-import com.example.mynotfirstproject.data.datasource.remote.NetworkJokeDao
+import com.example.mynotfirstproject.data.datasource.db.dao.JokeDao
+import com.example.mynotfirstproject.data.datasource.db.interfaces.LocalDataSource
 import com.example.mynotfirstproject.data.entity.Jokes
 import kotlinx.coroutines.flow.Flow
 

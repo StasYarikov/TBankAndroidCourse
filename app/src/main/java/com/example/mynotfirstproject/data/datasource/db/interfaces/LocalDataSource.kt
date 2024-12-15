@@ -1,8 +1,6 @@
-package com.example.mynotfirstproject.data.datasource.local
+package com.example.mynotfirstproject.data.datasource.db.interfaces
 
-import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import com.example.mynotfirstproject.data.entity.Jokes
-import com.example.mynotfirstproject.data.entity.NetworkJokes
 import kotlinx.coroutines.flow.Flow
 
 interface LocalDataSource {

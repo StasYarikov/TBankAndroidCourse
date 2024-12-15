@@ -13,8 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.mynotfirstproject.presentation.JokeActivity
 import com.example.mynotfirstproject.R
-import com.example.mynotfirstproject.domain.entity.JokeTypes
 import com.example.mynotfirstproject.databinding.JokeDetailsFragmentBinding
+import com.example.mynotfirstproject.presentation.uientity.JokeUI
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -61,28 +61,18 @@ class JokeDetailsFragment : Fragment() {
         viewModel.error.observe(viewLifecycleOwner) { showError(it) }
     }
 
-    private fun setupJokeData(jokeTypes: JokeTypes?) {
-        when (jokeTypes) {
-            is JokeTypes.MyJokes -> {
-                with(binding) {
-                    jokeAvatar.setImageResource(jokeTypes.data.picture?: R.drawable.warning)
-                    jokeCategory.text = jokeTypes.data.category
-                    jokeQuestion.text = jokeTypes.data.setup
-                    jokeAnswer.text = jokeTypes.data.delivery
-                }
+    private fun setupJokeData(joke: JokeUI?) {
+        if (joke != null) {
+            with(binding) {
+                jokeAvatar.setImageResource(joke.picture)
+                jokeCategory.text = joke.category
+                jokeQuestion.text = joke.setup
+                jokeAnswer.text = joke.delivery
             }
-            is JokeTypes.JokesFromNetwork -> {
-                with(binding) {
-                    jokeAvatar.setImageResource(jokeTypes.data.picture?: R.drawable.warning)
-                    jokeCategory.text = jokeTypes.data.category
-                    jokeQuestion.text = jokeTypes.data.setup
-                    jokeAnswer.text = jokeTypes.data.delivery
-                }
-            }
-            null -> {
-                showError("Something happened")
-                parentFragmentManager.popBackStack()
-            }
+        }
+        else {
+            showError("Something happened")
+            parentFragmentManager.popBackStack()
         }
     }
 

@@ -3,22 +3,22 @@ package com.example.mynotfirstproject.domain.repository
 import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.data.entity.NetworkJokes
-import com.example.mynotfirstproject.domain.entity.JokeTypes
+import com.example.mynotfirstproject.domain.entity.JokeItem
 import kotlinx.coroutines.flow.Flow
 
 interface JokesRepository {
 
-    suspend fun getJokes(): List<JokeTypes>
+    suspend fun getJokes(): List<JokeItem>
 
-    suspend fun loadMoreJokes(): JokeApiResponse
+    suspend fun loadMoreJokes(): List<JokeItem>
 
     suspend fun generateJokes()
 
-    suspend fun addJoke(joke: JokeTypes)
+    suspend fun addJoke(joke: JokeItem)
 
-    suspend fun addJokes(jokes: List<JokeTypes>)
+    suspend fun addJokes(jokes: List<JokeItem>)
 
-    suspend fun getJokeById(jokeId: Int): JokeTypes
+    suspend fun getJokeById(jokeId: Int): JokeItem
 
     suspend fun deleteJoke(jokeId: Int)
 
@@ -26,6 +26,6 @@ interface JokesRepository {
 
     suspend fun deleteAllJokes()
 
-    suspend fun getCacheJokes(): List<JokeTypes>
+    suspend fun getCacheJokes(): List<JokeItem>
 
 }

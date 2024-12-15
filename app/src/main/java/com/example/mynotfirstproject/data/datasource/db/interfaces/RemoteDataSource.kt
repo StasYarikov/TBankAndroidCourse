@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.data.datasource.remote
+package com.example.mynotfirstproject.data.datasource.db.interfaces
 
 import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import com.example.mynotfirstproject.data.entity.NetworkJokes

@@ -1,64 +1,66 @@
 package com.example.mynotfirstproject.data.repository
 
-import com.example.mynotfirstproject.data.JokeGenerator
-import com.example.mynotfirstproject.domain.entity.JokeTypes
-import com.example.mynotfirstproject.data.datasource.remote.RemoteDataSource
-import com.example.mynotfirstproject.data.datasource.local.JokeDao
-import com.example.mynotfirstproject.data.datasource.local.LocalDataSource
-import com.example.mynotfirstproject.data.datasource.remote.NetworkJokeDao
+import com.example.mynotfirstproject.data.jokeGenerator.JokeGeneratorImpl
+import com.example.mynotfirstproject.data.datasource.db.interfaces.RemoteDataSource
+import com.example.mynotfirstproject.data.datasource.db.interfaces.LocalDataSource
 import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.data.entity.NetworkJokes
+import com.example.mynotfirstproject.data.mapper.JokeItemJokesMapper
+import com.example.mynotfirstproject.data.mapper.JokeItemNetworkJokesMapper
+import com.example.mynotfirstproject.domain.entity.JokeItem
 import com.example.mynotfirstproject.domain.repository.JokesRepository
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 
 class JokeRepository(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
+    private val jokeItemJokesMapper: JokeItemJokesMapper,
+    private val jokeItemNetworkJokesMapper: JokeItemNetworkJokesMapper,
     ) : JokesRepository {
 
-    val generator = JokeGenerator
+    private val generator = JokeGeneratorImpl
 
-    override suspend fun getJokes(): List<JokeTypes> {
+    override suspend fun getJokes(): List<JokeItem> {
         val jokesList: List<Jokes> = localDataSource.getAllJokes().first()
-        val jokeTypesList: List<JokeTypes> = jokesList.map { JokeTypes.MyJokes(it) }
-        return jokeTypesList
+        return if (jokesList.isEmpty()) {
+            remoteDataSource.getJokes().networkJokes.map { jokeItemNetworkJokesMapper.map(it) }
+        } else jokesList.map {
+            jokeItemJokesMapper.map(it)
+        }
     }
 
-    override suspend fun loadMoreJokes(): JokeApiResponse {
-        return remoteDataSource.getJokes()
+    override suspend fun loadMoreJokes(): List<JokeItem> {
+        return remoteDataSource.getJokes().networkJokes.map {
+            jokeItemNetworkJokesMapper.map(it)
+        }
     }
 
     override suspend fun generateJokes() {
         localDataSource.insertAll(generator.generateJokes())
     }
 
-    override suspend fun addJoke(joke: JokeTypes) {
-        when (joke) {
-            is JokeTypes.MyJokes -> localDataSource.insert(joke.data)
-            is JokeTypes.JokesFromNetwork -> remoteDataSource.insert(joke.data)
-        }
+    override suspend fun addJoke(joke: JokeItem) {
+        localDataSource.insert(jokeItemJokesMapper.mapToJokesFromJokeItem(joke))
     }
 
-    override suspend fun addJokes(jokes: List<JokeTypes>) {
-        jokes.forEach {
-            when (it) {
-                is JokeTypes.MyJokes -> localDataSource.insert(it.data)
-                is JokeTypes.JokesFromNetwork -> remoteDataSource.insert(it.data)
+    override suspend fun addJokes(jokes: List<JokeItem>) {
+        remoteDataSource.insertAllFromNetwork(
+            jokes.map {
+                jokeItemNetworkJokesMapper.mapToNetworkJokesFromJokeItem(it)
             }
-        }
+        )
     }
 
     override suspend fun deleteJoke(jokeId: Int) {
         localDataSource.deleteJokeById(jokeId)
     }
 
-    override suspend fun getJokeById(jokeId: Int): JokeTypes {
+    override suspend fun getJokeById(jokeId: Int): JokeItem {
         val joke = localDataSource.getJokeById(jokeId).first()
-        if (joke != null) return JokeTypes.MyJokes(joke)
+        if (joke != null) return jokeItemJokesMapper.map(joke)
         else {
-            return remoteDataSource.getJokeById(jokeId).first()!!.let { JokeTypes.JokesFromNetwork(it) }
+            return jokeItemNetworkJokesMapper.map( remoteDataSource.getJokeById(jokeId).first()!! )
         }
     }
 
@@ -73,7 +75,7 @@ class JokeRepository(
 
     private val CACHE_EXPIRATION_TIME = 24 * 60 * 60 * 1000
 
-    override suspend fun getCacheJokes(): List<JokeTypes> {
+    override suspend fun getCacheJokes(): List<JokeItem> {
         val currentTime = System.currentTimeMillis()
 
         val currentCache: List<NetworkJokes> = remoteDataSource.getAllNetworkJokes().first().toList()
@@ -83,12 +85,11 @@ class JokeRepository(
             if (currentTime - lastUpdate <= CACHE_EXPIRATION_TIME) {
 
                 return currentCache.map {
-                    it.label = "From cache"
-                    JokeTypes.JokesFromNetwork(it)
+                    jokeItemNetworkJokesMapper.map(it)
                 }
             }
             else {
-                remoteDataSource.getAllNetworkJokes()
+                remoteDataSource.deleteAllJokes()
             }
         }
         return emptyList()

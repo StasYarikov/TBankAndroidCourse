@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.data.datasource.remote
+package com.example.mynotfirstproject.data.datasource.service
 
 import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import retrofit2.http.GET

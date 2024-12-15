@@ -1,11 +1,11 @@
 package com.example.mynotfirstproject.presentation.jokes_list.recycler.util
 
 import androidx.recyclerview.widget.DiffUtil
-import com.example.mynotfirstproject.domain.entity.JokeTypes
+import com.example.mynotfirstproject.presentation.uientity.JokeUI
 
 class JokeDiffUtilCallback(
-    private val oldList: List<JokeTypes>,
-    private val newList: List<JokeTypes>
+    private val oldList: List<JokeUI>,
+    private val newList: List<JokeUI>
 ): DiffUtil.Callback() {
 
     override fun getOldListSize(): Int = oldList.size
@@ -13,24 +13,10 @@ class JokeDiffUtilCallback(
     override fun getNewListSize(): Int = newList.size
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldList[oldItemPosition]
-        val newItem = newList[newItemPosition]
-
-        return when {
-            oldItem is JokeTypes.MyJokes && newItem is JokeTypes.MyJokes -> oldItem.data.id == newItem.data.id
-            oldItem is JokeTypes.JokesFromNetwork && newItem is JokeTypes.JokesFromNetwork -> oldItem.data.id == newItem.data.id
-            else -> false
-        }
+        return oldList[oldItemPosition].id == newList[newItemPosition].id
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldItem = oldList[oldItemPosition]
-        val newItem = newList[newItemPosition]
-
-        return when {
-            oldItem is JokeTypes.MyJokes && newItem is JokeTypes.MyJokes -> oldItem == newItem
-            oldItem is JokeTypes.JokesFromNetwork && newItem is JokeTypes.JokesFromNetwork -> oldItem == newItem
-            else -> false
-        }
+        return oldList[oldItemPosition] == newList[newItemPosition]
     }
 }

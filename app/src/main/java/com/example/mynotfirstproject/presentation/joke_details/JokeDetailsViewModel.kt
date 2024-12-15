@@ -4,11 +4,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.mynotfirstproject.data.repository.JokeRepository
-import com.example.mynotfirstproject.domain.entity.JokeTypes
 import com.example.mynotfirstproject.domain.repository.JokesRepository
 import com.example.mynotfirstproject.domain.usecase.DeleteJokeUseCase
 import com.example.mynotfirstproject.domain.usecase.DeleteNetworkJokeUseCase
 import com.example.mynotfirstproject.domain.usecase.GetJokeByIdUseCase
+import com.example.mynotfirstproject.presentation.uientity.JokeUI
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,8 +19,8 @@ class JokeDetailsViewModel(
     private val deleteNetworkJokeUseCase: DeleteNetworkJokeUseCase,
 ) : ViewModel() {
 
-    private val _selectedJokesLiveData = MutableStateFlow<JokeTypes?>(null)
-    val selectedJokes: StateFlow<JokeTypes?> = _selectedJokesLiveData
+    private val _selectedJokesLiveData = MutableStateFlow<JokeUI?>(null)
+    val selectedJokes: StateFlow<JokeUI?> = _selectedJokesLiveData
 
     private val _error = MutableLiveData<String>()
     val error: LiveData<String> = _error
@@ -34,10 +34,7 @@ class JokeDetailsViewModel(
     }
 
     suspend fun deleteJoke() {
-        when {
-            selectedJokes.value is JokeTypes.MyJokes -> deleteJokeUseCase((selectedJokes.value as JokeTypes.MyJokes).data.id)
-            selectedJokes.value is JokeTypes.JokesFromNetwork -> deleteNetworkJokeUseCase((selectedJokes.value as JokeTypes.JokesFromNetwork).data.id)
-        }
+        _selectedJokesLiveData.value?.let { deleteJokeUseCase(it.id) }
     }
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->

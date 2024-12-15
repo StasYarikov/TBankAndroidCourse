@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.presentation.JokeActivity
 import com.example.mynotfirstproject.R
-import com.example.mynotfirstproject.domain.entity.JokeTypes
 import com.example.mynotfirstproject.databinding.JokeListFragmentBinding
 import com.example.mynotfirstproject.presentation.add_joke.AddJokeFragment
 import com.example.mynotfirstproject.presentation.joke_details.JokeDetailsFragment
@@ -124,10 +123,7 @@ class JokeListFragment : Fragment() {
         val joke = viewModel.jokesFlow.value.getOrNull(jokeId)
 
         if (joke != null) {
-            when (joke) {
-                is JokeTypes.MyJokes -> realJokeId = joke.data.id
-                is JokeTypes.JokesFromNetwork -> realJokeId = joke.data.id
-            }
+            realJokeId = joke.id
             val fragment = JokeDetailsFragment.newInstance(realJokeId)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)

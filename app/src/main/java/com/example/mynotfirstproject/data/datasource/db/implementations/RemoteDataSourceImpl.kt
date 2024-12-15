@@ -1,5 +1,8 @@
-package com.example.mynotfirstproject.data.datasource.remote
+package com.example.mynotfirstproject.data.datasource.db.implementations
 
+import com.example.mynotfirstproject.data.datasource.db.dao.NetworkJokeDao
+import com.example.mynotfirstproject.data.datasource.db.interfaces.RemoteDataSource
+import com.example.mynotfirstproject.data.datasource.service.JokeApiService
 import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import com.example.mynotfirstproject.data.entity.NetworkJokes
 import kotlinx.coroutines.flow.Flow

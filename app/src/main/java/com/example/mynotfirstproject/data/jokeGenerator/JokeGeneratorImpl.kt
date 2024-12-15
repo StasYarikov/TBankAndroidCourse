@@ -1,9 +1,9 @@
-package com.example.mynotfirstproject.data
+package com.example.mynotfirstproject.data.jokeGenerator
 
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.entity.Jokes
 
-object JokeGenerator {
+object JokeGeneratorImpl : JokeGenerator {
 
     val data = mutableListOf<Jokes>()
 
@@ -18,12 +18,13 @@ object JokeGenerator {
     )
 
     private val avatarSet = mutableSetOf(
-        null,
         R.drawable.joking,
-        R.drawable.laugh
+        R.drawable.laugh,
+        R.drawable.emoji,
+        R.drawable.laughing,
     )
 
-    fun generateJokes(): List<Jokes> {
+    override fun generateJokes(): List<Jokes> {
         data.clear()
         data.addAll(buildList {
             for (i in 0..6) {
@@ -44,7 +45,7 @@ object JokeGenerator {
         )
     }
 
-    fun generateRandomPicture(): Int? {
+    fun generateRandomPicture(): Int {
         return avatarSet.random()
     }
 }

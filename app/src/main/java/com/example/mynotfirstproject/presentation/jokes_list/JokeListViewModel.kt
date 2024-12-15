@@ -1,23 +1,18 @@
 package com.example.mynotfirstproject.presentation.jokes_list
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mynotfirstproject.data.entity.NetworkJokes
 import com.example.mynotfirstproject.data.entity.JokeApiResponse
-import com.example.mynotfirstproject.data.repository.JokeRepository
 import com.example.mynotfirstproject.data.entity.Jokes
-import com.example.mynotfirstproject.data.datasource.remote.RetrofitInstance
-import com.example.mynotfirstproject.domain.entity.JokeTypes
-import com.example.mynotfirstproject.domain.repository.JokesRepository
 import com.example.mynotfirstproject.domain.usecase.AddJokesUseCase
 import com.example.mynotfirstproject.domain.usecase.DeleteAllJokesUseCase
 import com.example.mynotfirstproject.domain.usecase.GenerateJokesUseCase
 import com.example.mynotfirstproject.domain.usecase.GetCacheJokesUseCase
 import com.example.mynotfirstproject.domain.usecase.GetJokesUseCase
 import com.example.mynotfirstproject.domain.usecase.LoadMoreJokesUseCase
+import com.example.mynotfirstproject.presentation.uientity.JokeUI
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -33,8 +28,8 @@ class JokeListViewModel(
     private val addJokesUseCase: AddJokesUseCase
 ): ViewModel() {
 
-    private val _jokesFlow = MutableStateFlow<List<JokeTypes>>(emptyList())
-    val jokesFlow: StateFlow<List<JokeTypes>> get() = _jokesFlow
+    private val _jokesFlow = MutableStateFlow<List<JokeUI>>(emptyList())
+    val jokesFlow: StateFlow<List<JokeUI>> get() = _jokesFlow
 
     private val mutableProgressLiveData: MutableLiveData<Boolean> = MutableLiveData()
     val progressLiveData: LiveData<Boolean> = mutableProgressLiveData
@@ -49,25 +44,7 @@ class JokeListViewModel(
             val currentList = _jokesFlow.value.toMutableList()
             val cacheJokes = getCacheJokesUseCase()
             cacheJokes.forEach { newJoke ->
-                val existingJoke : JokeTypes?
-                when (newJoke) {
-                    is JokeTypes.MyJokes -> {
-                        existingJoke = currentList.find {
-                            when (it) {
-                                is JokeTypes.MyJokes -> it.data.id == newJoke.data.id
-                                is JokeTypes.JokesFromNetwork -> it.data.id == newJoke.data.id
-                            }
-                        }
-                    }
-                    is JokeTypes.JokesFromNetwork -> {
-                        existingJoke = currentList.find {
-                            when (it) {
-                                is JokeTypes.MyJokes -> it.data.id == newJoke.data.id
-                                is JokeTypes.JokesFromNetwork -> it.data.id == newJoke.data.id
-                            }
-                        }
-                    }
-                }
+                val existingJoke : JokeUI? = currentList.find { it.id == newJoke.id }
                 if (existingJoke == null) {
                     currentList.add(newJoke)
                 }
@@ -92,7 +69,7 @@ class JokeListViewModel(
 
     suspend fun loadMoreJokes() {
         mutableProgressLiveData.postValue(true)
-        val response: JokeApiResponse = loadMoreJokesUseCase()
+        val response: List<JokeUI> = loadMoreJokesUseCase()
         addJokes(response)
         mutableProgressLiveData.postValue(false)
     }
@@ -102,18 +79,15 @@ class JokeListViewModel(
         _jokesFlow.value = emptyList()
     }
 
-    private suspend fun addJokes(response: JokeApiResponse) {
+    private suspend fun addJokes(response: List<JokeUI>) {
         val updatedList = _jokesFlow.first().toMutableList()
-        val newNetworkJokes = emptyList<JokeTypes>().toMutableList()
-        response.networkJokes.forEach { newJoke ->
+        val newNetworkJokes = emptyList<JokeUI>().toMutableList()
+        response.forEach { newJoke ->
             val existingJoke = updatedList.find {
-                when (it) {
-                    is JokeTypes.MyJokes -> it.data.id == newJoke.id
-                    is JokeTypes.JokesFromNetwork -> it.data.id == newJoke.id
-                }
+                it.id == newJoke.id
             }
             if (existingJoke == null) {
-                newNetworkJokes.add(JokeTypes.JokesFromNetwork(newJoke))
+                newNetworkJokes.add(newJoke)
             }
         }
         addJokesUseCase(newNetworkJokes)

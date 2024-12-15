@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.data.datasource.remote
+package com.example.mynotfirstproject.data.datasource.service
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
