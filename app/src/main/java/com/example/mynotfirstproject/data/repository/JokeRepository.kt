@@ -3,7 +3,7 @@ package com.example.mynotfirstproject.data.repository
 import com.example.mynotfirstproject.data.jokeGenerator.JokeGeneratorImpl
 import com.example.mynotfirstproject.data.datasource.db.interfaces.RemoteDataSource
 import com.example.mynotfirstproject.data.datasource.db.interfaces.LocalDataSource
-import com.example.mynotfirstproject.data.datasource.service.RetrofitInstance
+import com.example.mynotfirstproject.data.datasource.service.JokeApiService
 import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.data.entity.NetworkJokes
@@ -13,26 +13,28 @@ import com.example.mynotfirstproject.data.mapper.JokeItemNetworkJokesMapper
 import com.example.mynotfirstproject.domain.entity.JokeItem
 import com.example.mynotfirstproject.domain.repository.JokesRepository
 import kotlinx.coroutines.flow.first
+import javax.inject.Inject
 
-class JokeRepository(
+class JokeRepository @Inject constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
     private val jokeItemJokesMapper: JokeItemJokesMapper,
     private val jokeItemNetworkJokesMapper: JokeItemNetworkJokesMapper,
+    private val jokeApiService: JokeApiService,
     private val generator: JokeGenerator,
     ) : JokesRepository {
 
     override suspend fun getJokes(): List<JokeItem> {
         val jokesList: List<Jokes> = localDataSource.getAllJokes().first()
         return if (jokesList.isEmpty()) {
-            RetrofitInstance.api.getJokes().networkJokes.map { jokeItemNetworkJokesMapper.map(it) }
+            jokeApiService.getJokes().networkJokes.map { jokeItemNetworkJokesMapper.map(it) }
         } else jokesList.map {
             jokeItemJokesMapper.map(it)
         }
     }
 
     override suspend fun loadMoreJokes(): List<JokeItem> {
-        return RetrofitInstance.api.getJokes().networkJokes.map {
+        return jokeApiService.getJokes().networkJokes.map {
             jokeItemNetworkJokesMapper.map(it)
         }
     }

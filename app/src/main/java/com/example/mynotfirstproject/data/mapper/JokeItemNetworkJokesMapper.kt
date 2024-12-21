@@ -6,8 +6,9 @@ import com.example.mynotfirstproject.data.entity.NetworkJokes
 import com.example.mynotfirstproject.data.jokeGenerator.JokeGeneratorImpl
 import com.example.mynotfirstproject.domain.entity.JokeItem
 import com.example.mynotfirstproject.utils.enums.LabelEnum
+import javax.inject.Inject
 
-class JokeItemNetworkJokesMapper {
+class JokeItemNetworkJokesMapper @Inject constructor() {
 
     fun map(joke: NetworkJokes) : JokeItem {
         return with(joke) {

@@ -12,8 +12,9 @@ import com.example.mynotfirstproject.presentation.uientity.JokeUI
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-class JokeDetailsViewModel(
+class JokeDetailsViewModel @Inject constructor(
     private val getJokeByIdUseCase: GetJokeByIdUseCase,
     private val deleteJokeUseCase: DeleteJokeUseCase,
     private val deleteNetworkJokeUseCase: DeleteNetworkJokeUseCase,

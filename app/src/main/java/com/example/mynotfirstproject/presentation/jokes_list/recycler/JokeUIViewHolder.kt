@@ -6,8 +6,9 @@ import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.databinding.JokeItemBinding
 import com.example.mynotfirstproject.presentation.uientity.JokeUI
+import javax.inject.Inject
 
-class JokeUIViewHolder(
+class JokeUIViewHolder (
     private val binding: JokeItemBinding,
     private val clickListener: (Int) -> Unit,
 ): RecyclerView.ViewHolder(binding.root) {

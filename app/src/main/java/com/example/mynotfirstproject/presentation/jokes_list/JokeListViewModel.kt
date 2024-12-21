@@ -18,8 +18,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class JokeListViewModel(
+class JokeListViewModel @Inject constructor(
     private val getJokesUseCase: GetJokesUseCase,
     private val getCacheJokesUseCase: GetCacheJokesUseCase,
     private val generateJokesUseCase: GenerateJokesUseCase,

@@ -10,9 +10,10 @@ import com.example.mynotfirstproject.domain.usecase.AddJokeUseCase
 import com.example.mynotfirstproject.domain.usecase.GetJokesUseCase
 import com.example.mynotfirstproject.presentation.uientity.JokeUI
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlin.math.max
 
-class AddJokeViewModel(
+class AddJokeViewModel @Inject constructor(
     private val getJokesUseCase: GetJokesUseCase,
     private val addJokeUseCase: AddJokeUseCase
 ) : ViewModel() {

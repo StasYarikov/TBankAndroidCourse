@@ -1,5 +1,6 @@
 package com.example.mynotfirstproject.presentation.add_joke
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,20 +9,32 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.mynotfirstproject.App
 import com.example.mynotfirstproject.presentation.JokeActivity
 import com.example.mynotfirstproject.databinding.FragmentAddJokeBinding
+import com.example.mynotfirstproject.presentation.jokes_list.JokeListViewModel
+import com.example.mynotfirstproject.presentation.viewModelFactory.JokesViewModelFactory
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class AddJokeFragment : Fragment() {
 
-    private val viewModel: AddJokeViewModel by activityViewModels {
-        (requireActivity() as JokeActivity).viewModelFactory
-    }
-
     private var _binding: FragmentAddJokeBinding? = null
     private val binding get() = _binding!!
+
+    @Inject
+    lateinit var viewModelFactory: JokesViewModelFactory
+    private val viewModel: AddJokeViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[AddJokeViewModel::class.java]
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().applicationContext as App).appComponent.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

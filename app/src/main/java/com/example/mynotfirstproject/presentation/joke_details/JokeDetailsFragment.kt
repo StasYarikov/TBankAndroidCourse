@@ -1,5 +1,6 @@
 package com.example.mynotfirstproject.presentation.joke_details
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,21 +10,34 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.example.mynotfirstproject.App
 import com.example.mynotfirstproject.presentation.JokeActivity
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.databinding.JokeDetailsFragmentBinding
+import com.example.mynotfirstproject.presentation.jokes_list.JokeListViewModel
 import com.example.mynotfirstproject.presentation.uientity.JokeUI
+import com.example.mynotfirstproject.presentation.viewModelFactory.JokesViewModelFactory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class JokeDetailsFragment : Fragment() {
 
     private var _binding: JokeDetailsFragmentBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: JokeDetailsViewModel by activityViewModels {
-        (requireActivity() as JokeActivity).viewModelFactory
+
+    @Inject
+    lateinit var viewModelFactory: JokesViewModelFactory
+    private val viewModel: JokeDetailsViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[JokeDetailsViewModel::class.java]
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().applicationContext as App).appComponent.inject(this)
     }
 
     override fun onCreateView(
