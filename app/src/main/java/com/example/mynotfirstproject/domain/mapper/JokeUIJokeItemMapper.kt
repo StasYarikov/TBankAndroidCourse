@@ -1,8 +1,7 @@
 package com.example.mynotfirstproject.domain.mapper
 
-import com.example.mynotfirstproject.R
-import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.domain.entity.JokeItem
+import com.example.mynotfirstproject.utils.enums.LabelEnum
 import com.example.mynotfirstproject.presentation.uientity.JokeUI
 
 class JokeUIJokeItemMapper {
@@ -20,7 +19,7 @@ class JokeUIJokeItemMapper {
         }
     }
 
-    fun mapToJokeItemFromJokeItem(item: JokeUI): JokeItem {
+    fun mapToJokeItemFromJokeUI(item: JokeUI): JokeItem {
         return with(item) {
             JokeItem(
                 id = id,
@@ -28,7 +27,7 @@ class JokeUIJokeItemMapper {
                 setup = setup,
                 delivery = delivery,
                 picture = picture,
-                label = label,
+                label = if (label == LabelEnum.INTERNETJOKE) LabelEnum.CACHEJOKE else LabelEnum.LOCALJOKE,
             )
         }
     }

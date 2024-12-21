@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mynotfirstproject.data.jokeGenerator.JokeGeneratorImpl
-import com.example.mynotfirstproject.data.entity.Jokes
+import com.example.mynotfirstproject.utils.enums.LabelEnum
 import com.example.mynotfirstproject.domain.usecase.AddJokeUseCase
 import com.example.mynotfirstproject.domain.usecase.GetJokesUseCase
 import com.example.mynotfirstproject.presentation.uientity.JokeUI
@@ -36,7 +36,7 @@ class AddJokeViewModel(
                         setup = question,
                         delivery = answer,
                         picture = JokeGeneratorImpl.generateRandomPicture(),
-                        label = "Local"
+                        label = LabelEnum.LOCALJOKE
                     )
                 )
             }

@@ -11,7 +11,7 @@ class AddJokesUseCase(
 
     suspend operator fun invoke(jokes: List<JokeUI>) {
         jokesRepository.addJokes(jokes.map {
-            jokeUIJokeItemMapper.mapToJokeItemFromJokeItem(it)
+            jokeUIJokeItemMapper.mapToJokeItemFromJokeUI(it)
         })
     }
 }

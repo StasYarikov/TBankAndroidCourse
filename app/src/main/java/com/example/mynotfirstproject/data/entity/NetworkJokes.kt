@@ -2,6 +2,7 @@ package com.example.mynotfirstproject.data.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.mynotfirstproject.utils.enums.LabelEnum
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -19,5 +20,5 @@ data class NetworkJokes(
     val delivery: String,
     val timestamp: Long = System.currentTimeMillis(),
     val picture: Int? = null,
-    var label: String? = null
+    var label: String = LabelEnum.INTERNETJOKE.label,
 )

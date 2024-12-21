@@ -8,13 +8,8 @@ import com.example.mynotfirstproject.data.entity.NetworkJokes
 import kotlinx.coroutines.flow.Flow
 
 class RemoteDataSourceImpl(
-    private val api: JokeApiService,
     private val networkJokeDao: NetworkJokeDao
 ) : RemoteDataSource {
-
-    override suspend fun getJokes(): JokeApiResponse {
-        return api.getJokes()
-    }
 
     override suspend fun insertAllFromNetwork(networkJokes: List<NetworkJokes>) {
         networkJokeDao.insertAllFromNetwork(networkJokes)

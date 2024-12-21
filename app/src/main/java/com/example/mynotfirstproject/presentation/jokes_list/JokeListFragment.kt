@@ -62,6 +62,7 @@ class JokeListFragment : Fragment() {
         }
 //        viewModel.generateJokes()
         viewModel.loadJokesWithDelay()
+        Log.d("check", "Here we are")
     }
 
     private fun initViewModel() {

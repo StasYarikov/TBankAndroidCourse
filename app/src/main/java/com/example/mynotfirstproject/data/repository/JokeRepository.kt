@@ -3,9 +3,11 @@ package com.example.mynotfirstproject.data.repository
 import com.example.mynotfirstproject.data.jokeGenerator.JokeGeneratorImpl
 import com.example.mynotfirstproject.data.datasource.db.interfaces.RemoteDataSource
 import com.example.mynotfirstproject.data.datasource.db.interfaces.LocalDataSource
+import com.example.mynotfirstproject.data.datasource.service.RetrofitInstance
 import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.data.entity.NetworkJokes
+import com.example.mynotfirstproject.data.jokeGenerator.JokeGenerator
 import com.example.mynotfirstproject.data.mapper.JokeItemJokesMapper
 import com.example.mynotfirstproject.data.mapper.JokeItemNetworkJokesMapper
 import com.example.mynotfirstproject.domain.entity.JokeItem
@@ -17,21 +19,20 @@ class JokeRepository(
     private val localDataSource: LocalDataSource,
     private val jokeItemJokesMapper: JokeItemJokesMapper,
     private val jokeItemNetworkJokesMapper: JokeItemNetworkJokesMapper,
+    private val generator: JokeGenerator,
     ) : JokesRepository {
-
-    private val generator = JokeGeneratorImpl
 
     override suspend fun getJokes(): List<JokeItem> {
         val jokesList: List<Jokes> = localDataSource.getAllJokes().first()
         return if (jokesList.isEmpty()) {
-            remoteDataSource.getJokes().networkJokes.map { jokeItemNetworkJokesMapper.map(it) }
+            RetrofitInstance.api.getJokes().networkJokes.map { jokeItemNetworkJokesMapper.map(it) }
         } else jokesList.map {
             jokeItemJokesMapper.map(it)
         }
     }
 
     override suspend fun loadMoreJokes(): List<JokeItem> {
-        return remoteDataSource.getJokes().networkJokes.map {
+        return RetrofitInstance.api.getJokes().networkJokes.map {
             jokeItemNetworkJokesMapper.map(it)
         }
     }

@@ -1,9 +1,9 @@
 package com.example.mynotfirstproject.data.mapper
 
-import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.data.jokeGenerator.JokeGeneratorImpl
 import com.example.mynotfirstproject.domain.entity.JokeItem
+import com.example.mynotfirstproject.utils.enums.LabelEnum
 
 class JokeItemJokesMapper {
 
@@ -15,7 +15,7 @@ class JokeItemJokesMapper {
                 setup = setup,
                 delivery = delivery,
                 picture = picture ?: JokeGeneratorImpl.generateRandomPicture(),
-                label = label ?: "From the Internet",
+                label = LabelEnum.LOCALJOKE,
             )
         }
     }
@@ -28,7 +28,7 @@ class JokeItemJokesMapper {
                 setup = setup,
                 delivery = delivery,
                 picture = picture,
-                label = label,
+                label = label.label,
             )
         }
     }

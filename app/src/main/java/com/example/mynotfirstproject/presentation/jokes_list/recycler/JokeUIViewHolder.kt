@@ -1,5 +1,6 @@
 package com.example.mynotfirstproject.presentation.jokes_list.recycler
 
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.entity.Jokes
@@ -16,7 +17,7 @@ class JokeUIViewHolder(
         binding.questionField.text = item.setup
         binding.answerField.text = item.delivery
         binding.picture.setImageResource(item.picture)
-        binding.label.text = item.label
+        binding.label.text = item.label.label
         binding.idField.text = item.id.toString()
 
         binding.root.setOnClickListener {

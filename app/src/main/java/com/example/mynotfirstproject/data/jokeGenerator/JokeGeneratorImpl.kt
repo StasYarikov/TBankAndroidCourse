@@ -2,6 +2,7 @@ package com.example.mynotfirstproject.data.jokeGenerator
 
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.data.entity.Jokes
+import com.example.mynotfirstproject.utils.enums.LabelEnum
 
 object JokeGeneratorImpl : JokeGenerator {
 
@@ -41,7 +42,7 @@ object JokeGeneratorImpl : JokeGenerator {
             setup = jokes[index][1],
             delivery = jokes[index][2],
             picture = generateRandomPicture(),
-            label = "Local"
+            label = "Local",
         )
     }
 

@@ -1,12 +1,9 @@
 package com.example.mynotfirstproject.data.datasource.db.interfaces
 
-import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import com.example.mynotfirstproject.data.entity.NetworkJokes
 import kotlinx.coroutines.flow.Flow
 
 interface RemoteDataSource {
-
-    suspend fun getJokes(): JokeApiResponse
 
     suspend fun insertAllFromNetwork(networkJokes: List<NetworkJokes>)
 

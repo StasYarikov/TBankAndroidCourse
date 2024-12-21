@@ -8,6 +8,7 @@ import com.example.mynotfirstproject.data.datasource.db.AppDatabase
 import com.example.mynotfirstproject.data.datasource.db.implementations.LocalDataSourceImpl
 import com.example.mynotfirstproject.data.datasource.db.implementations.RemoteDataSourceImpl
 import com.example.mynotfirstproject.data.datasource.service.RetrofitInstance
+import com.example.mynotfirstproject.data.jokeGenerator.JokeGeneratorImpl
 import com.example.mynotfirstproject.data.mapper.JokeItemJokesMapper
 import com.example.mynotfirstproject.data.mapper.JokeItemNetworkJokesMapper
 import com.example.mynotfirstproject.databinding.ActivityJokeBinding
@@ -23,10 +24,10 @@ class JokeActivity : AppCompatActivity() {
         ),
         remoteDataSource = RemoteDataSourceImpl(
             networkJokeDao = AppDatabase.INSTANCE.networkDao(),
-            api = RetrofitInstance.api
         ),
         jokeItemJokesMapper = JokeItemJokesMapper(),
         jokeItemNetworkJokesMapper = JokeItemNetworkJokesMapper(),
+        generator = JokeGeneratorImpl
     ) }
     val viewModelFactory by lazy { JokesViewModelFactory(
         repository,
