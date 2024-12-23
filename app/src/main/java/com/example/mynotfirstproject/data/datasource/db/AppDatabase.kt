@@ -13,20 +13,4 @@ import com.example.mynotfirstproject.data.entity.NetworkJokes
 abstract class AppDatabase : RoomDatabase() {
     abstract fun jokeDao(): JokeDao
     abstract fun networkDao(): NetworkJokeDao
-
-    companion object {
-        @Volatile
-        lateinit var INSTANCE: AppDatabase
-
-        fun initDatabase(context: Context) {
-            val instance = Room.databaseBuilder(
-                context.applicationContext,
-                AppDatabase::class.java,
-                "app_database"
-            )
-                .fallbackToDestructiveMigration()
-                .build()
-            INSTANCE = instance
-        }
-    }
 }
