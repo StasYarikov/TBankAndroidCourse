@@ -8,8 +8,9 @@ import com.example.mynotfirstproject.databinding.JokeItemBinding
 import com.example.mynotfirstproject.presentation.jokes_list.recycler.JokeUIViewHolder
 import com.example.mynotfirstproject.presentation.jokes_list.recycler.util.JokeDiffUtilCallback
 import com.example.mynotfirstproject.presentation.uientity.JokeUI
+import javax.inject.Inject
 
-class JokeAdapter(
+class JokeAdapter (
     private val clickListener: (Int) -> Unit
 ): RecyclerView.Adapter<JokeUIViewHolder>() {
 

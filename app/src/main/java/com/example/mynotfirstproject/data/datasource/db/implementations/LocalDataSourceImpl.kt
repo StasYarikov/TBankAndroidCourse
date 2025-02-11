@@ -4,8 +4,9 @@ import com.example.mynotfirstproject.data.datasource.db.dao.JokeDao
 import com.example.mynotfirstproject.data.datasource.db.interfaces.LocalDataSource
 import com.example.mynotfirstproject.data.entity.Jokes
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class LocalDataSourceImpl(
+class LocalDataSourceImpl @Inject constructor(
     private val jokeDao: JokeDao
 ) : LocalDataSource {
     override suspend fun insertAll(jokes: List<Jokes>) {

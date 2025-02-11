@@ -2,6 +2,7 @@ package com.example.mynotfirstproject.data.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.mynotfirstproject.utils.enums.LabelEnum
 
 @Entity(tableName = "jokes")
 data class Jokes(
@@ -11,5 +12,5 @@ data class Jokes(
     val setup: String,
     val delivery: String,
     val picture: Int? = null,
-    val label: String? = null
+    val label: String = LabelEnum.LOCALJOKE.label,
 )

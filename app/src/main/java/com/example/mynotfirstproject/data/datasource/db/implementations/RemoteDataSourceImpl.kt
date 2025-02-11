@@ -6,15 +6,11 @@ import com.example.mynotfirstproject.data.datasource.service.JokeApiService
 import com.example.mynotfirstproject.data.entity.JokeApiResponse
 import com.example.mynotfirstproject.data.entity.NetworkJokes
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class RemoteDataSourceImpl(
-    private val api: JokeApiService,
+class RemoteDataSourceImpl @Inject constructor(
     private val networkJokeDao: NetworkJokeDao
 ) : RemoteDataSource {
-
-    override suspend fun getJokes(): JokeApiResponse {
-        return api.getJokes()
-    }
 
     override suspend fun insertAllFromNetwork(networkJokes: List<NetworkJokes>) {
         networkJokeDao.insertAllFromNetwork(networkJokes)

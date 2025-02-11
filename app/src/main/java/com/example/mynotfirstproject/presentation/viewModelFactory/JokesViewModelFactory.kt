@@ -18,50 +18,16 @@ import com.example.mynotfirstproject.domain.usecase.LoadMoreJokesUseCase
 import com.example.mynotfirstproject.presentation.add_joke.AddJokeViewModel
 import com.example.mynotfirstproject.presentation.joke_details.JokeDetailsViewModel
 import com.example.mynotfirstproject.presentation.jokes_list.JokeListViewModel
+import dagger.Provides
+import javax.inject.Inject
+import javax.inject.Provider
 
-class JokesViewModelFactory(
-    private val repository: JokesRepository,
-    private val jokeUIJokeItemMapper: JokeUIJokeItemMapper,
+class JokesViewModelFactory @Inject constructor(
+    private val creators: @JvmSuppressWildcards Map<Class<out ViewModel>, Provider<ViewModel>>
 ): ViewModelProvider.Factory {
 
     override fun <T: ViewModel> create(modelClass: Class<T>): T {
-        val getJokesUseCase = GetJokesUseCase(repository, jokeUIJokeItemMapper)
-        val getCacheJokesUseCase = GetCacheJokesUseCase(repository, jokeUIJokeItemMapper)
-        val generateJokesUseCase = GenerateJokesUseCase(repository, jokeUIJokeItemMapper)
-        val loadMoreJokesUseCase = LoadMoreJokesUseCase(repository, jokeUIJokeItemMapper)
-        val deleteAllJokesUseCase = DeleteAllJokesUseCase(repository, jokeUIJokeItemMapper)
-        val addJokesUseCase = AddJokesUseCase(repository, jokeUIJokeItemMapper)
-        val addJokeUseCase = AddJokeUseCase(repository, jokeUIJokeItemMapper)
-        val getJokeByIdUseCase = GetJokeByIdUseCase(repository, jokeUIJokeItemMapper)
-        val deleteJokeUseCase = DeleteJokeUseCase(repository, jokeUIJokeItemMapper)
-        val deleteNetworkJokeUseCase = DeleteNetworkJokeUseCase(repository, jokeUIJokeItemMapper)
-
-        return when {
-            modelClass.isAssignableFrom(JokeListViewModel::class.java) -> {
-                JokeListViewModel(
-                    getJokesUseCase,
-                    getCacheJokesUseCase,
-                    generateJokesUseCase,
-                    loadMoreJokesUseCase,
-                    deleteAllJokesUseCase,
-                    addJokesUseCase,
-                ) as T
-            }
-            modelClass.isAssignableFrom(JokeDetailsViewModel::class.java) -> {
-                JokeDetailsViewModel(
-                    getJokeByIdUseCase,
-                    deleteJokeUseCase,
-                    deleteNetworkJokeUseCase,
-                ) as T
-            }
-            modelClass.isAssignableFrom(AddJokeViewModel::class.java) -> {
-                AddJokeViewModel(
-                    getJokesUseCase,
-                    addJokeUseCase,
-                ) as T
-            }
-            else -> throw IllegalArgumentException("Unknown ViewModel class")
-        }
+        return creators[modelClass]?.get() as? T
+            ?: throw IllegalArgumentException("Unknown ViewModel class: $modelClass")
     }
-
 }

@@ -5,8 +5,10 @@ import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.data.entity.NetworkJokes
 import com.example.mynotfirstproject.data.jokeGenerator.JokeGeneratorImpl
 import com.example.mynotfirstproject.domain.entity.JokeItem
+import com.example.mynotfirstproject.utils.enums.LabelEnum
+import javax.inject.Inject
 
-class JokeItemNetworkJokesMapper {
+class JokeItemNetworkJokesMapper @Inject constructor() {
 
     fun map(joke: NetworkJokes) : JokeItem {
         return with(joke) {
@@ -16,7 +18,7 @@ class JokeItemNetworkJokesMapper {
                 setup = setup,
                 delivery = delivery,
                 picture = picture ?: JokeGeneratorImpl.generateRandomPicture(),
-                label = label ?: "From the Internet",
+                label = if (label == LabelEnum.INTERNETJOKE.label) LabelEnum.INTERNETJOKE else LabelEnum.CACHEJOKE,
             )
         }
     }
@@ -29,7 +31,7 @@ class JokeItemNetworkJokesMapper {
                 setup = setup,
                 delivery = delivery,
                 picture = picture,
-                label = label,
+                label = label.label,
             )
         }
     }

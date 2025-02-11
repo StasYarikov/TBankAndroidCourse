@@ -2,8 +2,9 @@ package com.example.mynotfirstproject.presentation.jokes_list.recycler.util
 
 import androidx.recyclerview.widget.DiffUtil
 import com.example.mynotfirstproject.presentation.uientity.JokeUI
+import javax.inject.Inject
 
-class JokeDiffUtilCallback(
+class JokeDiffUtilCallback @Inject constructor(
     private val oldList: List<JokeUI>,
     private val newList: List<JokeUI>
 ): DiffUtil.Callback() {

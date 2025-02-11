@@ -1,5 +1,6 @@
 package com.example.mynotfirstproject.presentation.jokes_list
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,28 +11,40 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.mynotfirstproject.App
 import com.example.mynotfirstproject.presentation.JokeActivity
 import com.example.mynotfirstproject.R
 import com.example.mynotfirstproject.databinding.JokeListFragmentBinding
 import com.example.mynotfirstproject.presentation.add_joke.AddJokeFragment
 import com.example.mynotfirstproject.presentation.joke_details.JokeDetailsFragment
 import com.example.mynotfirstproject.presentation.jokes_list.recycler.adapter.JokeAdapter
+import com.example.mynotfirstproject.presentation.viewModelFactory.JokesViewModelFactory
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class JokeListFragment : Fragment() {
 
     private var _binding: JokeListFragmentBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: JokeListViewModel by activityViewModels {
-        (requireActivity() as JokeActivity).viewModelFactory
+
+    @Inject
+    lateinit var viewModelFactory: JokesViewModelFactory
+    private val viewModel: JokeListViewModel by lazy {
+        ViewModelProvider(this, viewModelFactory)[JokeListViewModel::class.java]
     }
 
     private val adapter = JokeAdapter { jokeId ->
         openJokeDetails(jokeId)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (requireActivity().applicationContext as App).appComponent.inject(this)
     }
 
     override fun onCreateView(
