@@ -111,6 +111,7 @@ class JokeListFragment : Fragment() {
             val totalItemCount = layoutManager.itemCount
             val lastVisibleItemPosition = layoutManager.findLastVisibleItemPosition()
 
+            Log.d("Check", "$totalItemCount $lastVisibleItemPosition")
             if (totalItemCount == lastVisibleItemPosition + 1) {
                 if (!viewModel.loadingProcess) {
                     viewLifecycleOwner.lifecycleScope.launch(viewModel.exceptionHandler) {

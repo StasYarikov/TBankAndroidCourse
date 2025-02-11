@@ -9,7 +9,7 @@ import com.example.mynotfirstproject.data.datasource.db.dao.NetworkJokeDao
 import com.example.mynotfirstproject.data.entity.Jokes
 import com.example.mynotfirstproject.data.entity.NetworkJokes
 
-@Database(entities = [NetworkJokes::class, Jokes::class], version = 10)
+@Database(entities = [NetworkJokes::class, Jokes::class], version = 11)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun jokeDao(): JokeDao
     abstract fun networkDao(): NetworkJokeDao

@@ -27,7 +27,7 @@ class JokeRepository @Inject constructor(
     override suspend fun getJokes(): List<JokeItem> {
         val jokesList: List<Jokes> = localDataSource.getAllJokes().first()
         return if (jokesList.isEmpty()) {
-            jokeApiService.getJokes().networkJokes.map { jokeItemNetworkJokesMapper.map(it) }
+            emptyList()
         } else jokesList.map {
             jokeItemJokesMapper.map(it)
         }

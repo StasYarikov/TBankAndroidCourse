@@ -12,7 +12,7 @@ import com.example.mynotfirstproject.data.jokeGenerator.JokeGeneratorImpl
 import com.example.mynotfirstproject.data.mapper.JokeItemJokesMapper
 import com.example.mynotfirstproject.data.mapper.JokeItemNetworkJokesMapper
 import com.example.mynotfirstproject.databinding.ActivityJokeBinding
-import com.example.mynotfirstproject.domain.mapper.JokeUIJokeItemMapper
+import com.example.mynotfirstproject.presentation.mapper.JokeUIJokeItemMapper
 import com.example.mynotfirstproject.presentation.viewModelFactory.JokesViewModelFactory
 import com.example.mynotfirstproject.presentation.jokes_list.JokeListFragment
 import javax.inject.Inject

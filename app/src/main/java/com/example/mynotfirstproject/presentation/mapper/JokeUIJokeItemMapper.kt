@@ -1,4 +1,4 @@
-package com.example.mynotfirstproject.domain.mapper
+package com.example.mynotfirstproject.presentation.mapper
 
 import com.example.mynotfirstproject.domain.entity.JokeItem
 import com.example.mynotfirstproject.utils.enums.LabelEnum

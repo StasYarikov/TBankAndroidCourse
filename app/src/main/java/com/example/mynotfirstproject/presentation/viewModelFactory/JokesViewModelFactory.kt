@@ -3,7 +3,7 @@ package com.example.mynotfirstproject.presentation.viewModelFactory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.mynotfirstproject.data.repository.JokeRepository
-import com.example.mynotfirstproject.domain.mapper.JokeUIJokeItemMapper
+import com.example.mynotfirstproject.presentation.mapper.JokeUIJokeItemMapper
 import com.example.mynotfirstproject.domain.repository.JokesRepository
 import com.example.mynotfirstproject.domain.usecase.AddJokeUseCase
 import com.example.mynotfirstproject.domain.usecase.AddJokesUseCase
